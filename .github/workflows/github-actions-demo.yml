@@ -16,10 +16,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: -Install dependencies
-        uses: pip install -r requirements.txt
+        run: pip install -r requirements.txt
       
       - name: Isort linter
-        uses: isort .
+        run: isort .
       
       - name: Black linter
-        uses: black .
+        run: black .
