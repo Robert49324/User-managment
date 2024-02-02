@@ -16,7 +16,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: -Install dependencies
-        run: python -r pip install requirements.txt
+        run: pip install -r requirements.txt
       
       - name: Isort linter
         run: isort .
