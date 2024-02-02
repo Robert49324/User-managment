@@ -10,6 +10,8 @@ jobs:
         python-version: ["3.12"]
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
