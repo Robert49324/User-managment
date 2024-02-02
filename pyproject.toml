@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "user-managment"
+version = "0.1"
+description = "User_managment microservice"
+authors = ["JustPC <robert49324@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
