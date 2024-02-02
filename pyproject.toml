@@ -10,6 +10,7 @@ python = "^3.12"
 black = "^24.1.1"
 fastapi = "^0.109.0"
 isort = "^5.13.2"
+logging = "^0.4.9.6"
 
 
 [build-system]
