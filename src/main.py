@@ -3,7 +3,7 @@ import logging.config
 import uvicorn
 from fastapi import FastAPI
 
-logging.config.fileConfig('./logging.ini')
+logging.config.fileConfig('../logging.ini')
 logger = logging.getLogger('user_managment')
 
 app = FastAPI()

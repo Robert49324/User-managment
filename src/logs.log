@@ -32,3 +32,5 @@
 05-02-2024 10:36:24 DEBUG | user_managment | Root endpoint called
 05-02-2024 10:36:25 DEBUG | user_managment | Root endpoint called
 05-02-2024 10:36:25 DEBUG | user_managment | Root endpoint called
+05-02-2024 15:04:21 DEBUG | asyncio | Using proactor: IocpProactor
+05-02-2024 15:04:36 DEBUG | user_managment | Root endpoint called
