@@ -12,6 +12,7 @@ fastapi = "^0.109.0"
 isort = "^5.13.2"
 logging = "^0.4.9.6"
 pydantic = "^2.6.0"
+alembic = "^1.13.1"
 
 
 [build-system]
