@@ -9,6 +9,12 @@ class LoginRequest(BaseModel):
 class SignUpRequest(BaseModel):
     name: str
     surname: str
+    username: str
     password: str
-    phone_number: str
     email: str
+
+
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str

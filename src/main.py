@@ -4,10 +4,13 @@ import logging.config
 import uvicorn
 from fastapi import FastAPI
 
-logging.config.fileConfig("../logging.ini")
+from auth.router import auth
+
+logging.config.fileConfig("User-managment\logging.ini")
 logger = logging.getLogger("user_managment")
 
 app = FastAPI()
+app.include_router(auth)
 
 
 @app.get("/")
