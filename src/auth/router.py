@@ -7,10 +7,11 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
+sys.path.append("..")
 from auth.constants import *
-from database import get_db
-from ..models import User
+from models import User
 
+from .dependencies import get_db
 from .schemas import SignUpRequest
 
 auth = APIRouter(prefix="/auth", tags=["Auth module"])
@@ -21,7 +22,7 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 @auth.post("/signup")
 def signup(db: Annotated[Session, Depends(get_db)], user: SignUpRequest):
-    print(db.query(User).filter_by(email=user.email).first())
+    # print(db.query(User).filter_by(email=user.email).first())
     if db.query(User).filter_by(email=user.email).first() == None:
         user = User(
             name=user.name,
@@ -33,7 +34,7 @@ def signup(db: Annotated[Session, Depends(get_db)], user: SignUpRequest):
         db.add(user)
         db.commit()
     else:
-        return {"error":"User already exists"}
+        return {"error": "User already exists"}
 
 
 @auth.post("/login")

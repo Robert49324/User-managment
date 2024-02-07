@@ -1,13 +1,15 @@
+import enum
 import uuid
 
-from sqlalchemy import UUID, Boolean, Column, DateTime, Enum, ForeignKey, Integer, Text
+from sqlalchemy import (UUID, Boolean, Column, DateTime, Enum, ForeignKey,
+                        Integer, Text)
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
 from database import Base
 
 
-class Role(Enum):
+class Role(enum.Enum):
     USER = "USER"
     ADMIN = "ADMIN"
     MODERATOR = "MODERATOR"
@@ -23,7 +25,7 @@ class User(Base):
     password = mapped_column(Text, nullable=False)
     phone_number = mapped_column(Text, unique=True)
     email = mapped_column(Text, unique=True, nullable=False)
-    role = mapped_column(Role, nullable=False, default=Role.USER)
+    role = mapped_column(Enum(Role), nullable=False, default=Role.USER)
     group = mapped_column(ForeignKey("group.id"))
     image = mapped_column(Text, unique=True)
     is_blocked = mapped_column(Boolean)
