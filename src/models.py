@@ -1,8 +1,7 @@
 import enum
 import uuid
 
-from sqlalchemy import (UUID, Boolean, Column, DateTime, Enum, ForeignKey,
-                        Integer, Text)
+from sqlalchemy import UUID, Boolean, Column, DateTime, Enum, ForeignKey, Integer, Text
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 

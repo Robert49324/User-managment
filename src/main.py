@@ -7,17 +7,17 @@ from fastapi import FastAPI
 
 from auth.router import auth
 
-# logging.config.fileConfig("../logging.ini")
-# logger = logging.getLogger("user_managment")
+logging.config.fileConfig("../logging.ini")
+logger = logging.getLogger("user_managment")
 
 app = FastAPI()
+
 app.include_router(auth)
 
 
-@app.get("/")
-async def root():
-    # logger.debug("Root endpoint called")
-    return {"message": "check"}
+@app.get("/healthcheck", include_in_schema=False)
+async def healthcheck() -> dict[str, str]:
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":

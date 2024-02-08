@@ -1,64 +1,17 @@
-06-02-2024 18:20:39 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 18:20:48 DEBUG | user_managment | Root endpoint called
-06-02-2024 18:22:49 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 18:48:49 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 18:49:30 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 18:49:57 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 18:50:56 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 18:51:10 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 18:57:27 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:01:54 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:01:56 DEBUG | passlib.handlers.bcrypt | bcrypt 'builtin' backend not enabled via $PASSLIB_BUILTIN_BCRYPT
-06-02-2024 19:05:43 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:05:48 DEBUG | passlib.handlers.bcrypt | bcrypt 'builtin' backend not enabled via $PASSLIB_BUILTIN_BCRYPT
-06-02-2024 19:06:10 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:06:11 DEBUG | passlib.handlers.bcrypt | bcrypt 'builtin' backend not enabled via $PASSLIB_BUILTIN_BCRYPT
-06-02-2024 19:08:50 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:08:51 WARNING | passlib.handlers.bcrypt | (trapped) error reading bcrypt version
+07-02-2024 19:04:59 DEBUG | asyncio | Using proactor: IocpProactor
+07-02-2024 19:14:42 DEBUG | asyncio | Using proactor: IocpProactor
+07-02-2024 19:17:17 DEBUG | asyncio | Using proactor: IocpProactor
+07-02-2024 22:08:28 DEBUG | asyncio | Using proactor: IocpProactor
+07-02-2024 22:09:28 WARNING | passlib.handlers.bcrypt | (trapped) error reading bcrypt version
 Traceback (most recent call last):
   File "C:\Users\JustPC\AppData\Local\Programs\Python\Python312\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
     version = _bcrypt.__about__.__version__
               ^^^^^^^^^^^^^^^^^
 AttributeError: module 'bcrypt' has no attribute '__about__'
-06-02-2024 19:08:51 DEBUG | passlib.handlers.bcrypt | detected 'bcrypt' backend, version '<unknown>'
-06-02-2024 19:08:51 DEBUG | passlib.handlers.bcrypt | 'bcrypt' backend lacks $2$ support, enabling workaround
-06-02-2024 19:09:13 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:09:14 WARNING | passlib.handlers.bcrypt | (trapped) error reading bcrypt version
-Traceback (most recent call last):
-  File "C:\Users\JustPC\AppData\Local\Programs\Python\Python312\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
-    version = _bcrypt.__about__.__version__
-              ^^^^^^^^^^^^^^^^^
-AttributeError: module 'bcrypt' has no attribute '__about__'
-06-02-2024 19:09:14 DEBUG | passlib.handlers.bcrypt | detected 'bcrypt' backend, version '<unknown>'
-06-02-2024 19:09:14 DEBUG | passlib.handlers.bcrypt | 'bcrypt' backend lacks $2$ support, enabling workaround
-06-02-2024 19:09:43 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:09:45 WARNING | passlib.handlers.bcrypt | (trapped) error reading bcrypt version
-Traceback (most recent call last):
-  File "C:\Users\JustPC\AppData\Local\Programs\Python\Python312\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
-    version = _bcrypt.__about__.__version__
-              ^^^^^^^^^^^^^^^^^
-AttributeError: module 'bcrypt' has no attribute '__about__'
-06-02-2024 19:09:45 DEBUG | passlib.handlers.bcrypt | detected 'bcrypt' backend, version '<unknown>'
-06-02-2024 19:09:45 DEBUG | passlib.handlers.bcrypt | 'bcrypt' backend lacks $2$ support, enabling workaround
-06-02-2024 19:14:36 DEBUG | asyncio | Using proactor: IocpProactor
-06-02-2024 19:14:37 WARNING | passlib.handlers.bcrypt | (trapped) error reading bcrypt version
-Traceback (most recent call last):
-  File "C:\Users\JustPC\AppData\Local\Programs\Python\Python312\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
-    version = _bcrypt.__about__.__version__
-              ^^^^^^^^^^^^^^^^^
-AttributeError: module 'bcrypt' has no attribute '__about__'
-06-02-2024 19:14:37 DEBUG | passlib.handlers.bcrypt | detected 'bcrypt' backend, version '<unknown>'
-06-02-2024 19:14:37 DEBUG | passlib.handlers.bcrypt | 'bcrypt' backend lacks $2$ support, enabling workaround
-06-02-2024 19:15:53 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:13:33 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:13:43 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:13:52 DEBUG | user_managment | Root endpoint called
-07-02-2024 17:13:52 DEBUG | user_managment | Root endpoint called
-07-02-2024 17:18:43 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:18:57 DEBUG | user_managment | Root endpoint called
-07-02-2024 17:18:57 DEBUG | user_managment | Root endpoint called
-07-02-2024 17:20:00 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:20:51 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:26:01 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:28:12 DEBUG | asyncio | Using proactor: IocpProactor
-07-02-2024 17:28:18 DEBUG | user_managment | Root endpoint called
+07-02-2024 22:09:28 DEBUG | passlib.handlers.bcrypt | detected 'bcrypt' backend, version '<unknown>'
+07-02-2024 22:09:28 DEBUG | passlib.handlers.bcrypt | 'bcrypt' backend lacks $2$ support, enabling workaround
+08-02-2024 10:42:58 DEBUG | asyncio | Using proactor: IocpProactor
+08-02-2024 10:43:41 DEBUG | asyncio | Using proactor: IocpProactor
+08-02-2024 10:44:47 DEBUG | asyncio | Using proactor: IocpProactor
+08-02-2024 10:48:43 DEBUG | asyncio | Using proactor: IocpProactor
+08-02-2024 10:48:55 DEBUG | asyncio | Using proactor: IocpProactor
