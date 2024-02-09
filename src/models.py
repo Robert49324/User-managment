@@ -5,7 +5,7 @@ from sqlalchemy import UUID, Boolean, Column, DateTime, Enum, ForeignKey, Intege
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
-from database import Base
+from src.database import Base
 
 
 class Role(enum.Enum):

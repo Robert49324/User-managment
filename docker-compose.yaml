@@ -7,9 +7,12 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: user_managment
+      POSTGRES_DB: user_management
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - network
+
   redis:
     image: redis:latest
     restart: always
@@ -18,3 +21,17 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PORT=6379
+    networks:
+      - network
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - network
