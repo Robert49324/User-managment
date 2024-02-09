@@ -7,8 +7,8 @@ from fastapi import FastAPI
 
 from auth.router import auth
 
-logging.config.fileConfig("../logging.ini")
-logger = logging.getLogger("user_managment")
+# logging.config.fileConfig("../logging.ini")
+# logger = logging.getLogger("user_managment")
 
 app = FastAPI()
 
