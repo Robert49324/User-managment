@@ -10,8 +10,14 @@ from sqlalchemy.orm import Session
 sys.path.append("..")
 
 from auth.constants import *
-from auth.service import (authenticate_user, create_access_token,
-                          create_refresh_token, is_blocked, authorize)
+from auth.service import (
+    authenticate_user,
+    authorize,
+    create_access_token,
+    create_refresh_token,
+    get_current_user,
+    is_blocked,
+)
 from models import User
 
 from .dependencies import bcrypt_context, get_db, oauth2_bearer
@@ -53,12 +59,22 @@ def login(db: Annotated[Session, Depends(get_db)], form_data: LoginRequest):
 
 @auth.post("/refresh_token")
 def refresh_token(
-    db: Annotated[Session, Depends(get_db)],
-    refresh_token: dict=Depends(authorize)
+    db: Annotated[Session, Depends(get_db)], refresh_token: dict = Depends(authorize)
 ):
     if is_blocked(str(refresh_token)):
         return HTTPException(status_code=403, detail="User is blocked")
-    return refresh_token
+
+    user = get_current_user(refresh_token.pop(), db)
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Could not validate user.")
+    return {
+        "access_token": create_access_token(
+            {"id": str(user.id), "email": user.email, "role": str(user.role)}
+        ),
+        "refresh_token": create_refresh_token({"id": str(user.id)}),
+        "token_type": "bearer",
+    }
 
 
 @auth.post("/reset_password")

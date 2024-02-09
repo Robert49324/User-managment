@@ -18,7 +18,7 @@ from .dependencies import bcrypt_context, oauth2_bearer
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.datetime.utcnow() + timedelta(minutes=60)
+    expire = datetime.datetime.now() + timedelta(hours=1)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -26,21 +26,21 @@ def create_access_token(data: dict):
 
 def create_refresh_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    expire = datetime.datetime.utcnow() + timedelta(days=1)
+    expire = datetime.datetime.now() + timedelta(days=1)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
+def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id: str = payload.get("id")
-        email: str = payload.get("email")
-        if email is None or id is None:
+        if id is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
-        
-        return {"id": id, "email": email}
+        user = db.query(User).filter_by(id=id).first()
+
+        return user
 
     except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate the user.")
@@ -59,6 +59,7 @@ def is_blocked(token: str):
     if redis.exists(token):
         return True
     return False
+
 
 async def authorize(token: str = Depends(oauth2_bearer)):
     return {token}
