@@ -11,7 +11,7 @@ sys.path.append("..")
 
 from auth.constants import *
 from auth.service import (authenticate_user, create_access_token,
-                          create_refresh_token, is_blocked)
+                          create_refresh_token, is_blocked, authorize)
 from models import User
 
 from .dependencies import bcrypt_context, get_db, oauth2_bearer
@@ -54,10 +54,11 @@ def login(db: Annotated[Session, Depends(get_db)], form_data: LoginRequest):
 @auth.post("/refresh_token")
 def refresh_token(
     db: Annotated[Session, Depends(get_db)],
-    refresh_token: Annotated[str, Depends(oauth2_bearer)],
+    refresh_token: dict=Depends(authorize)
 ):
-    if is_blocked:
+    if is_blocked(str(refresh_token)):
         return HTTPException(status_code=403, detail="User is blocked")
+    return refresh_token
 
 
 @auth.post("/reset_password")

@@ -39,6 +39,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         email: str = payload.get("email")
         if email is None or id is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
+        
         return {"id": id, "email": email}
 
     except JWTError:
@@ -58,3 +59,6 @@ def is_blocked(token: str):
     if redis.exists(token):
         return True
     return False
+
+async def authorize(token: str = Depends(oauth2_bearer)):
+    return {token}
