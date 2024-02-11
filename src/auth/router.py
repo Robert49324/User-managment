@@ -10,15 +10,11 @@ from sqlalchemy.orm import Session
 sys.path.append("..")
 
 from auth.constants import *
-from auth.service import (
-    authenticate_user,
-    authorize,
-    create_access_token,
-    create_refresh_token,
-    get_current_user,
-    is_blocked,
-)
+from auth.service import (authenticate_user, authorize, create_access_token,
+                          create_refresh_token, get_current_user, is_blocked)
 from models import User
+
+from logger import logger
 
 from .dependencies import bcrypt_context, get_db, oauth2_bearer
 from .schemas import LoginRequest, SignUpRequest, Token
@@ -29,6 +25,7 @@ auth = APIRouter(prefix="/auth", tags=["Auth module"])
 @auth.post("/signup", status_code=201)
 def signup(db: Annotated[Session, Depends(get_db)], user: SignUpRequest):
     if db.query(User).filter_by(email=user.email).first() == None:
+        logger.info(f"User {user.email} has been registrated")
         user = User(
             name=user.name,
             surname=user.surname,
@@ -46,6 +43,7 @@ def signup(db: Annotated[Session, Depends(get_db)], user: SignUpRequest):
 @auth.post("/login")
 def login(db: Annotated[Session, Depends(get_db)], form_data: LoginRequest):
     user = authenticate_user(form_data.email, form_data.password, db)
+    logger.info(f"Logging in {form_data.email}")
     if not user:
         raise HTTPException(status_code=401, detail="Could not validate user.")
     return {
@@ -68,6 +66,7 @@ def refresh_token(
 
     if not user:
         raise HTTPException(status_code=401, detail="Could not validate user.")
+    logger.info(f"Refreshing token {refresh_token}")
     return {
         "access_token": create_access_token(
             {"id": str(user.id), "email": user.email, "role": str(user.role)}

@@ -1,11 +1,15 @@
 import enum
 import uuid
 
-from sqlalchemy import UUID, Boolean, Column, DateTime, Enum, ForeignKey, Integer, Text
+from sqlalchemy import (UUID, Boolean, Column, DateTime, Enum, ForeignKey,
+                        Integer, Text)
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
-from src.database import Base
+try:
+    from database import Base
+except:
+    from .database import Base
 
 
 class Role(enum.Enum):

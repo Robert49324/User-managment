@@ -27,7 +27,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "pip install alembic && poetry run alembic upgrade head"
+    # command: bash -c "pip install alembic && poetry run alembic upgrade head"
     ports:
       - "8000:8000"
     depends_on:

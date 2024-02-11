@@ -1,4 +1,3 @@
 #!/bin/bash
-ls
-# alembic upgrade head
-python app/src/main.py 
+poetry run alembic upgrade head
+poetry run python src/main.py 
