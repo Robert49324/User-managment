@@ -7,8 +7,8 @@ from fastapi import FastAPI
 
 from auth.router import auth
 
-# logging.config.fileConfig("../logging.ini")
-# logger = logging.getLogger("user_managment")
+logging.config.fileConfig("../logging.ini")
+logger = logging.getLogger("user_managment")
 
 app = FastAPI()
 
@@ -21,4 +21,5 @@ async def healthcheck() -> dict[str, str]:
 
 
 if __name__ == "__main__":
+    logger.info("Server started")
     uvicorn.run(app, host="0.0.0.0", port=8000)
