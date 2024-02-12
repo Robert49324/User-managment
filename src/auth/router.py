@@ -1,4 +1,3 @@
-import sys
 from datetime import timedelta
 from typing import Annotated
 
@@ -6,8 +5,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-
-sys.path.append("..")
 
 from auth.constants import *
 from auth.service import (authenticate_user, authorize, create_access_token,

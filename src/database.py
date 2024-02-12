@@ -14,4 +14,6 @@ Base = declarative_base()
 
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
-redis = redis.Redis(host=settings.redis_host, port=settings.redis_port, decode_responses=True)
+redis = redis.Redis(
+    host=settings.redis_host, port=settings.redis_port, decode_responses=True
+)

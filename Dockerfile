@@ -10,6 +10,8 @@ COPY . .
 
 RUN poetry install
 
+ENV PYTHONPATH "/app/src"
+
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 

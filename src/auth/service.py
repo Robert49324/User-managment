@@ -1,7 +1,4 @@
-import sys
 from auth.config import settings
-
-sys.path.append("..")
 
 import datetime
 from datetime import timedelta
@@ -9,7 +6,6 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
-
 
 from database import redis
 from models import User
@@ -21,7 +17,9 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.datetime.now() + timedelta(hours=1)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.secret_key, algorithm=settings.algorithm
+    )
     return encoded_jwt
 
 
@@ -29,7 +27,9 @@ def create_refresh_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.datetime.now() + timedelta(days=1)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.secret_key, algorithm=settings.algorithm
+    )
     return encoded_jwt
 
 
