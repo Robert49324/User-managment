@@ -19,7 +19,7 @@ jobs:
 
       - name: -Install dependencies
         run: | 
-          pip install isort, black
+          pip install -r requirements.txt
       
       - name: Isort linter
         run: isort .
