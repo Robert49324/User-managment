@@ -4,8 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
     
-    secret_key : str
-    algorithm : str
+    # secret_key : str
+    # algorithm : str
     
     host: str
     port: int
@@ -14,9 +14,6 @@ class Settings(BaseSettings):
     
     redis_host : str
     redis_port : int
-    
-    # class Config:
-    #     env_file = ".env"
 
 
 settings = Settings()

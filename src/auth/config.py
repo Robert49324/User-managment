@@ -1,13 +1,12 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-# class Settings(BaseSettings):
-#     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
-#     secret_key : str
-#     algorithm : str
-
-#     # class Config:
-#     #     env_file = ".env"
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+    secret_key : str
+    algorithm : str
 
 
-# settings = Settings()
+
+
+settings = Settings()

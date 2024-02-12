@@ -1,5 +1,5 @@
 import sys
-from config import settings
+from auth.config import settings
 
 sys.path.append("..")
 
