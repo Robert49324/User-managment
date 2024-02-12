@@ -1,0 +1,12 @@
+12-02-2024 15:46:28 INFO | user_managment | Server started
+12-02-2024 15:46:28 DEBUG | asyncio | Using proactor: IocpProactor
+12-02-2024 15:47:06 INFO | user_managment | Server started on 0.0.0.0:9000
+12-02-2024 15:47:06 DEBUG | asyncio | Using proactor: IocpProactor
+12-02-2024 15:48:44 INFO | user_managment | Server started on 0.0.0.0:8000
+12-02-2024 15:48:44 DEBUG | asyncio | Using proactor: IocpProactor
+12-02-2024 15:54:55 INFO | user_managment | Server started on 0.0.0.0:8000
+12-02-2024 15:54:55 DEBUG | asyncio | Using proactor: IocpProactor
+12-02-2024 15:56:49 INFO | user_managment | Server started on 0.0.0.0:8000
+12-02-2024 15:56:49 DEBUG | asyncio | Using proactor: IocpProactor
+12-02-2024 16:13:03 INFO | user_managment | Server started on 0.0.0.0:8000
+12-02-2024 16:13:03 DEBUG | asyncio | Using proactor: IocpProactor

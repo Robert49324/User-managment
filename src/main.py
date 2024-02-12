@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from auth.router import auth
+from config import settings
 from logger import logger
 
 app = FastAPI()
@@ -15,5 +16,5 @@ async def healthcheck() -> dict[str, str]:
 
 
 if __name__ == "__main__":
-    logger.info("Server started")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    logger.info(f"Server started on {settings.host}:{settings.port}")
+    uvicorn.run(app, host=settings.host, port=settings.port)

@@ -1,4 +1,5 @@
 import sys
+from config import settings
 
 sys.path.append("..")
 
@@ -9,7 +10,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
 
-from auth.constants import *
+
 from database import redis
 from models import User
 
@@ -20,7 +21,7 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.datetime.now() + timedelta(hours=1)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
     return encoded_jwt
 
 
@@ -28,13 +29,13 @@ def create_refresh_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.datetime.now() + timedelta(days=1)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
     return encoded_jwt
 
 
 def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.secret_key, algorithms=settings.algorithm)
         id: str = payload.get("id")
         if id is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")

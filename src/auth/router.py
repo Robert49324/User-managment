@@ -12,9 +12,8 @@ sys.path.append("..")
 from auth.constants import *
 from auth.service import (authenticate_user, authorize, create_access_token,
                           create_refresh_token, get_current_user, is_blocked)
-from models import User
-
 from logger import logger
+from models import User
 
 from .dependencies import bcrypt_context, get_db, oauth2_bearer
 from .schemas import LoginRequest, SignUpRequest, Token
