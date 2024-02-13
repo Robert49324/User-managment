@@ -503,6 +503,16 @@ pydantic = ">=2.3.0"
 python-dotenv = ">=0.21.0"
 
 [[package]]
+name = "python-abc"
+version = "0.2.0"
+description = "A python implementation of the ABC Software metric"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-abc-0.2.0.tar.gz", hash = "sha256:90017d09fbac7bde4b64b2c7e1b5d22da9055b64b821d1a2b4dc805b450b251a"},
+]
+
+[[package]]
 name = "python-dotenv"
 version = "1.0.1"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -738,4 +748,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "be303a2b9ad741efce1c1ab8815c1e8a69622d98f253617116cbc45a72d6d4ef"
+content-hash = "126003ebddb75a627686d330d47181545a3dd2565800297a827ba8f19d25018f"

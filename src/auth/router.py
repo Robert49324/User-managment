@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session
 
 from auth.constants import *
 from auth.service import (authenticate_user, authorize, create_access_token,
-                          create_refresh_token, get_current_user, is_blocked)
+                          create_refresh_token, get_current_user, handle_login,
+                          is_blocked)
+from database import postgres, redis_
 from logger import logger
 from models import User
 
@@ -19,8 +21,8 @@ auth = APIRouter(prefix="/auth", tags=["Auth module"])
 
 
 @auth.post("/signup", status_code=201)
-def signup(db: Annotated[Session, Depends(get_db)], user: SignUpRequest):
-    if db.query(User).filter_by(email=user.email).first() == None:
+def signup(user: SignUpRequest):
+    if postgres.read(user.email) is None:
         logger.info(f"User {user.email} has been registrated")
         user = User(
             name=user.name,
@@ -29,47 +31,28 @@ def signup(db: Annotated[Session, Depends(get_db)], user: SignUpRequest):
             password=bcrypt_context.hash(user.password),
             email=user.email,
         )
-        db.add(user)
-        db.commit()
+        postgres.create(user)
         return {"detail": "User successfully registered."}
     else:
         raise HTTPException(status_code=409, detail="User already exists.")
 
 
 @auth.post("/login")
-def login(db: Annotated[Session, Depends(get_db)], form_data: LoginRequest):
-    user = authenticate_user(form_data.email, form_data.password, db)
+def login(form_data: LoginRequest):
+    user = authenticate_user(form_data.email, form_data.password)
     logger.info(f"Logging in {form_data.email}")
-    if not user:
-        raise HTTPException(status_code=401, detail="Could not validate user.")
-    return {
-        "access_token": create_access_token(
-            {"id": str(user.id), "email": user.email, "role": str(user.role)}
-        ),
-        "refresh_token": create_refresh_token({"id": str(user.id)}),
-        "token_type": "bearer",
-    }
+    return handle_login(user)
 
 
 @auth.post("/refresh_token")
-def refresh_token(
-    db: Annotated[Session, Depends(get_db)], refresh_token: dict = Depends(authorize)
-):
-    if is_blocked(str(refresh_token)):
+def refresh_token(refresh_token: dict = Depends(authorize)):
+    refresh_token: str = refresh_token.pop()
+    if is_blocked(refresh_token):
         return HTTPException(status_code=403, detail="User is blocked")
 
-    user = get_current_user(refresh_token.pop(), db)
-
-    if not user:
-        raise HTTPException(status_code=401, detail="Could not validate user.")
-    logger.info(f"Refreshing token {refresh_token}")
-    return {
-        "access_token": create_access_token(
-            {"id": str(user.id), "email": user.email, "role": str(user.role)}
-        ),
-        "refresh_token": create_refresh_token({"id": str(user.id)}),
-        "token_type": "bearer",
-    }
+    user = get_current_user(refresh_token)
+    logger.info(f"Refreshing token: {refresh_token}")
+    return handle_login(user)
 
 
 @auth.post("/reset_password")

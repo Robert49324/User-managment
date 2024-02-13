@@ -19,6 +19,7 @@ alembic = "^1.13.1"
 python-multipart = "^0.0.7"
 bcrypt = "4.0.1"
 redis = "^5.0.1"
+python-abc = "^0.2.0"
 
 
 [build-system]
