@@ -1,15 +1,12 @@
 import enum
 import uuid
 
-from sqlalchemy import (UUID, Boolean, Column, DateTime, Enum, ForeignKey,
+from sqlalchemy import (UUID, Boolean, DateTime, Enum, ForeignKey, Index,
                         Integer, Text)
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
-try:
-    from database import Base
-except:
-    from .database import Base
+from database import Base
 
 
 class Role(enum.Enum):
@@ -28,12 +25,16 @@ class User(Base):
     password = mapped_column(Text, nullable=False)
     phone_number = mapped_column(Text, unique=True)
     email = mapped_column(Text, unique=True, nullable=False)
-    role = mapped_column(Enum(Role), nullable=False, default=Role.USER)
+    role = mapped_column(
+        Enum("USER", "ADMIN", "MODERATOR", name="Role"), nullable=False, default="USER"
+    )
     group = mapped_column(ForeignKey("group.id"))
     image = mapped_column(Text, unique=True)
     is_blocked = mapped_column(Boolean)
     created_at = mapped_column(DateTime, default=func.now())
-    modified_at = mapped_column(DateTime)
+    modified_at = mapped_column(DateTime, default=func.now())
+
+    __table_args__ = (Index("ix_users_email", email),)
 
 
 class Group(Base):

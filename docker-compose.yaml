@@ -1,25 +1,25 @@
 version: '3'
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16-alpine
     restart: always
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: user_management
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - backend
 
   redis:
-    image: redis:latest
+    image: redis:7.2.4-alpine
     restart: always
     ports:
       - "6379:6379"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_PORT=6379
+      - REDIS_PORT=${REDIS_PORT}
     networks:
       - backend
 
@@ -27,7 +27,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # command: bash -c "pip install alembic && poetry run alembic upgrade head"
     ports:
       - "8000:8000"
     depends_on:

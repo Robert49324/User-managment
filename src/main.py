@@ -4,10 +4,12 @@ from fastapi import FastAPI
 from auth.router import auth
 from config import settings
 from logger import logger
+from user.router import user
 
 app = FastAPI()
 
 app.include_router(auth)
+app.include_router(user)
 
 
 @app.get("/healthcheck", include_in_schema=False)

@@ -1,20 +1,19 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
-import redis
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+import redis.asyncio as redis
+from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-try:
-    from config import settings
-except ImportError:
-    from .config import settings
+from config import settings
 
-engine = create_engine(str(settings.database_url))
-Base = declarative_base()
-SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
-redis_client = redis.Redis(
-    host=settings.redis_host, port=settings.redis_port, decode_responses=True
+engine = create_async_engine(
+    f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@postgres:5432/{settings.postgres_database}"
 )
+Base = declarative_base()
+async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 class AbstractDatabase(ABC):
@@ -35,60 +34,63 @@ class AbstractDatabase(ABC):
         pass
 
 
-class PostgresClient(AbstractDatabase):
-    def __init__(self, db_session):
-        self.db = db_session
+class PostgresUser(AbstractDatabase):
+    async def create(self, user, db: AsyncSession):
+        db.add(user)
+        await db.commit()
 
-    def create(self, user):
-        self.db.add(user)
-        self.db.commit()
-
-    def read(self, email: str):
+    async def read(self, email: str, db: AsyncSession):
         from models import User
 
-        return self.db.query(User).filter_by(email=email).first()
+        user = await db.execute(select(User).where(User.email == email))
+        user = user.scalar()
+        return user
 
-    def read_by_id(self, id: str):
+    async def read_by_id(self, id: str, db: AsyncSession):
         from models import User
 
-        return self.db.query(User).filter_by(id=id).first()
+        user = await db.execute(select(User).where(User.id == id))
+        user = user.scalar()
+        return user
 
-    def update(self, **kwargs):
+    async def update(self, request: dict, db: AsyncSession):
         from models import User
 
-        email = kwargs.get("email")
-        user = self.read(email)
+        id = request.get("id")
+        user = await db.query(User).filter_by(id=id).first()
         if user:
-            for key, value in kwargs.items():
-                setattr(user, key, value)
-            self.db.commit()
+            for key, value in request.items():
+                if key in user.__dict__ and key != None:
+                    await setattr(user, key, value)
+            await db.commit()
 
-    def delete(self, email: str):
+    async def delete(self, email: str, db: AsyncSession):
         from models import User
 
-        user = self.read(email)
+        user = await db.query(User).filter_by(email=email).first()
         if user:
-            self.db.delete(user)
-            self.db.commit()
+            await db.delete(user)
+            await db.commit()
 
 
 class RedisClient(AbstractDatabase):
-    def __init__(self, redis_client):
-        self.redis = redis_client
+    def __init__(self):
+        self.redis = redis.from_url(settings.redis_url)
 
-    def create(self, key, value):
-        self.redis.set(key, value)
+    async def create(self, key, value):
+        print(f"Creating {key} : {value}")
+        await self.redis.set(key, value)
 
-    def read(self, key):
-        return self.redis.get(key)
+    async def read(self, key):
+        return await self.redis.get(key)
 
-    def update(self, key, value):
-        if self.redis.exists(key):
-            self.redis.set(key, value)
+    async def update(self, key, value):
+        if await self.redis.exists(key):
+            await self.redis.set(key, value)
 
-    def delete(self, key):
-        self.redis.delete(key)
+    async def delete(self, key):
+        await self.redis.delete(key)
 
 
-postgres = PostgresClient(SessionLocal())
-redis_ = RedisClient(redis_client)
+postgres = PostgresUser()
+redis_ = RedisClient()

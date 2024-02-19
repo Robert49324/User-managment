@@ -1,28 +1,25 @@
-from datetime import timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.constants import *
-from auth.service import (authenticate_user, authorize, create_access_token,
-                          create_refresh_token, get_current_user, handle_login,
-                          is_blocked)
+from auth.service import (authenticate_user, authorize, block_token,
+                          get_current_user, handle_login, is_blocked)
 from database import postgres, redis_
 from logger import logger
 from models import User
 
-from .dependencies import bcrypt_context, get_db, oauth2_bearer
-from .schemas import LoginRequest, SignUpRequest, Token
+from .db import get_db
+from .dependencies import bcrypt_context
+from .schemas import LoginRequest, SignUpRequest
 
 auth = APIRouter(prefix="/auth", tags=["Auth module"])
 
 
 @auth.post("/signup", status_code=201)
-def signup(user: SignUpRequest):
-    if postgres.read(user.email) is None:
+async def signup(user: SignUpRequest, db: Annotated[AsyncSession, Depends(get_db)]):
+    if await postgres.read(user.email, db) is None:
         logger.info(f"User {user.email} has been registrated")
         user = User(
             name=user.name,
@@ -31,28 +28,32 @@ def signup(user: SignUpRequest):
             password=bcrypt_context.hash(user.password),
             email=user.email,
         )
-        postgres.create(user)
+        await postgres.create(user, db)
         return {"detail": "User successfully registered."}
     else:
         raise HTTPException(status_code=409, detail="User already exists.")
 
 
 @auth.post("/login")
-def login(form_data: LoginRequest):
-    user = authenticate_user(form_data.email, form_data.password)
+async def login(form_data: LoginRequest, db: Annotated[AsyncSession, Depends(get_db)]):
+    user = await authenticate_user(form_data.email, form_data.password, db)
     logger.info(f"Logging in {form_data.email}")
-    return handle_login(user)
+    return await handle_login(user)
 
 
 @auth.post("/refresh_token")
-def refresh_token(refresh_token: dict = Depends(authorize)):
-    refresh_token: str = refresh_token.pop()
-    if is_blocked(refresh_token):
-        return HTTPException(status_code=403, detail="User is blocked")
+async def refresh_token(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    refresh_token: str = Depends(authorize),
+):
+    if await is_blocked(refresh_token):
+        return HTTPException(status_code=403, detail="Token is blocked")
 
-    user = get_current_user(refresh_token)
+    await block_token(refresh_token)
+
+    user = await get_current_user(refresh_token, db)
     logger.info(f"Refreshing token: {refresh_token}")
-    return handle_login(user)
+    return await handle_login(user)
 
 
 @auth.post("/reset_password")
