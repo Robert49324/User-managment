@@ -2,18 +2,12 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import redis.asyncio as redis
-from sqlalchemy import insert, select
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import delete, insert, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import func
 
 from config import settings
-
-engine = create_async_engine(
-    f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@postgres:5432/{settings.postgres_database}"
-)
-Base = declarative_base()
-async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+from models import User
 
 
 class AbstractDatabase(ABC):
@@ -35,42 +29,34 @@ class AbstractDatabase(ABC):
 
 
 class PostgresUser(AbstractDatabase):
+
     async def create(self, user, db: AsyncSession):
         db.add(user)
         await db.commit()
 
     async def read(self, email: str, db: AsyncSession):
-        from models import User
 
         user = await db.execute(select(User).where(User.email == email))
         user = user.scalar()
         return user
 
     async def read_by_id(self, id: str, db: AsyncSession):
-        from models import User
 
         user = await db.execute(select(User).where(User.id == id))
         user = user.scalar()
         return user
 
-    async def update(self, request: dict, db: AsyncSession):
-        from models import User
+    async def update(self, request: dict, db: AsyncSession, id: str):
+        request = {key: value for key, value in request.items() if value is not None}
+        request["modified_at"] = func.now()
+        await db.execute(update(User).where(User.id == id).values(**request))
+        await db.commit()
+        user = await db.execute(select(User).where(User.id == id))
+        return user.scalar()
 
-        id = request.get("id")
-        user = await db.query(User).filter_by(id=id).first()
-        if user:
-            for key, value in request.items():
-                if key in user.__dict__ and key != None:
-                    await setattr(user, key, value)
-            await db.commit()
-
-    async def delete(self, email: str, db: AsyncSession):
-        from models import User
-
-        user = await db.query(User).filter_by(email=email).first()
-        if user:
-            await db.delete(user)
-            await db.commit()
+    async def delete(self, id: str, db: AsyncSession):
+        await db.execute(delete(User).where(User.id == id))
+        await db.commit()
 
 
 class RedisClient(AbstractDatabase):
