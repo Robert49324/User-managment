@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
 from config import settings
-from models import User
+from models import Group, User, async_session
 
 
 class AbstractDatabase(ABC):
@@ -52,11 +52,11 @@ class PostgresUser(AbstractDatabase):
         await db.execute(update(User).where(User.id == id).values(**request))
         await db.commit()
         user = await db.execute(select(User).where(User.id == id))
-        return user.scalar()
+        user = user.scalar()
+        return user
 
     async def delete(self, id: str, db: AsyncSession):
         await db.execute(delete(User).where(User.id == id))
-        await db.commit()
 
 
 class RedisClient(AbstractDatabase):
@@ -80,3 +80,8 @@ class RedisClient(AbstractDatabase):
 
 postgres = PostgresUser()
 redis_ = RedisClient()
+
+
+async def get_db():
+    async with async_session() as session:
+        yield session

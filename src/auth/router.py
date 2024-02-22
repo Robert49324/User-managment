@@ -6,11 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.service import (authenticate_user, authorize, block_token,
                           get_current_user, handle_login, is_blocked)
-from database import postgres, redis_
+from database import get_db, postgres, redis_
 from logger import logger
 from models import User
 
-from .db import get_db
 from .dependencies import bcrypt_context
 from .schemas import LoginRequest, SignUpRequest
 

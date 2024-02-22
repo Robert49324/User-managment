@@ -1,11 +1,11 @@
 import enum
 import uuid
 
-from sqlalchemy import (UUID, Boolean, DateTime, Enum, ForeignKey, Index,
-                        Integer, Text)
+from sqlalchemy import (UUID, Boolean, Column, DateTime, Enum, ForeignKey,
+                        Index, Integer, Table, Text)
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import mapped_column, sessionmaker
+from sqlalchemy.orm import Mapped, mapped_column, relationship, sessionmaker
 from sqlalchemy.sql import func
 
 from config import settings
@@ -15,12 +15,6 @@ engine = create_async_engine(
 )
 Base = declarative_base()
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
-
-class Role(enum.Enum):
-    USER = "USER"
-    ADMIN = "ADMIN"
-    MODERATOR = "MODERATOR"
 
 
 class User(Base):
@@ -40,9 +34,7 @@ class User(Base):
     image = mapped_column(Text, unique=True)
     is_blocked = mapped_column(Boolean)
     created_at = mapped_column(DateTime, default=func.now())
-    modified_at = mapped_column(DateTime, default=func.now(), onupdate=func.now())
-
-    __table_args__ = (Index("ix_users_email", email),)
+    modified_at = mapped_column(DateTime, default=func.now())
 
 
 class Group(Base):
