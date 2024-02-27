@@ -22,6 +22,29 @@ services:
       - REDIS_PORT=${REDIS_PORT}
     networks:
       - backend
+    
+  rabbitmq:
+    image: rabbitmq:3.12-alpine
+    hostname: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
+    ports:
+      - 15672:15672
+    networks:
+      - backend
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    environment:
+      - SERVICES=s3
+    ports:
+      - 4566:4566
+    networks:
+      - backend
 
   server:
     build:
@@ -30,10 +53,14 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
       - redis
+      - rabbitmq
+      - localstack
+      - postgres
     networks:
       - backend
+  
+
 
 networks:
   backend:

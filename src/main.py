@@ -1,15 +1,18 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi_pagination import add_pagination
 
 from auth.router import auth
 from config import settings
 from logger import logger
-from user.router import user
+from user.router import user, users
 
 app = FastAPI()
+add_pagination(app)
 
 app.include_router(auth)
 app.include_router(user)
+app.include_router(users)
 
 
 @app.get("/healthcheck", include_in_schema=False)

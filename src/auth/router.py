@@ -5,13 +5,14 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.service import (authenticate_user, authorize, block_token,
-                          get_current_user, handle_login, is_blocked)
+                          get_current_user, handle_login, is_blocked,
+                          send_email)
 from database import get_db, postgres, redis_
 from logger import logger
 from models import User
 
 from .dependencies import bcrypt_context
-from .schemas import LoginRequest, SignUpRequest
+from .schemas import LoginRequest, ResetPasswordRequest, SignUpRequest
 
 auth = APIRouter(prefix="/auth", tags=["Auth module"])
 
@@ -56,5 +57,7 @@ async def refresh_token(
 
 
 @auth.post("/reset_password")
-def reset_password():
-    pass
+async def reset_password(
+    request: ResetPasswordRequest, user: User = Depends(get_current_user)
+):
+    await send_email(request.email)

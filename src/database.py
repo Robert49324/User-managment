@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import redis.asyncio as redis
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import asc, delete, desc, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
@@ -57,6 +57,27 @@ class PostgresUser(AbstractDatabase):
 
     async def delete(self, id: str, db: AsyncSession):
         await db.execute(delete(User).where(User.id == id))
+
+    async def get_all(
+        self,
+        db: AsyncSession,
+        filter_by_name: str = None,
+        sort_by: str = None,
+        order_by: str = None,
+    ):
+        query = (
+            select(User).where(User.name.contains(filter_by_name))
+            if filter_by_name
+            else select(User)
+        )
+        if sort_by and order_by:
+            if order_by == "asc":
+                query = query.order_by(asc(sort_by))
+            elif order_by == "desc":
+                query = query.order_by(desc(sort_by))
+        users = await db.execute(query)
+        users = users.scalars().all()
+        return users
 
 
 class RedisClient(AbstractDatabase):

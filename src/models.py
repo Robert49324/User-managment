@@ -32,7 +32,7 @@ class User(Base):
     )
     group = mapped_column(ForeignKey("group.id"))
     image = mapped_column(Text, unique=True)
-    is_blocked = mapped_column(Boolean)
+    is_blocked = mapped_column(Boolean, default=False)
     created_at = mapped_column(DateTime, default=func.now())
     modified_at = mapped_column(DateTime, default=func.now())
 

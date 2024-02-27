@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class UpdateRequest(BaseModel):
@@ -6,7 +6,7 @@ class UpdateRequest(BaseModel):
     surname: str = None
     username: str = None
     phone_number: str = None
-    email: str = None
+    email: str = EmailStr
 
 
 class ReturnUser(BaseModel):
@@ -14,4 +14,13 @@ class ReturnUser(BaseModel):
     surname: str = None
     username: str = None
     phone_number: str = None
-    email: str = None
+    email: str = EmailStr
+
+
+class ReturnPagination(BaseModel):
+    name: str
+    surname: str
+    username: str
+    email: EmailStr
+    role: str
+    is_blocked: bool
