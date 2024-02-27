@@ -57,6 +57,7 @@ class PostgresUser(AbstractDatabase):
 
     async def delete(self, id: str, db: AsyncSession):
         await db.execute(delete(User).where(User.id == id))
+        await db.commit()
 
     async def get_all(
         self,

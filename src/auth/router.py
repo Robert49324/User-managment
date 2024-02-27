@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.service import (authenticate_user, authorize, block_token,
                           get_current_user, handle_login, is_blocked,
-                          send_email)
+                          send_email, verify_password)
 from database import get_db, postgres, redis_
 from logger import logger
 from models import User
@@ -46,18 +46,21 @@ async def refresh_token(
     db: Annotated[AsyncSession, Depends(get_db)],
     refresh_token: str = Depends(authorize),
 ):
+    print(refresh_token)
     if await is_blocked(refresh_token):
         return HTTPException(status_code=403, detail="Token is blocked")
-
     await block_token(refresh_token)
-
-    user = await get_current_user(refresh_token, db)
+    print(refresh_token)
+    user = await get_current_user(db=db, token=refresh_token)
     logger.info(f"Refreshing token: {refresh_token}")
     return await handle_login(user)
 
 
 @auth.post("/reset_password")
 async def reset_password(
-    request: ResetPasswordRequest, user: User = Depends(get_current_user)
+    db: Annotated[AsyncSession, Depends(get_db)], request: ResetPasswordRequest, user: User = Depends(get_current_user)
 ):
-    await send_email(request.email)
+    if await verify_password(user, request.password):
+        await postgres.update({"password": bcrypt_context.hash(request.new_password)}, db, user.id)
+        await send_email(request.email)
+    

@@ -104,6 +104,6 @@ async def add_image(
 ):
     if await s3.upload_fileobj(image, image.filename):
         await postgres.update({"image": image.filename}, db, user.id)
-        return {"message": "File uploaded successfully to S3"}
+        return True
     else:
         raise HTTPException(status_code=500, detail="Failed to upload image")
