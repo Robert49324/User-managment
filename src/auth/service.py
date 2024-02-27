@@ -2,13 +2,16 @@ import datetime
 from datetime import timedelta
 from typing import Annotated
 
+from aio_pika import Message, connect
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from database import postgres, redis_
+from database import get_db, postgres, redis_
 from models import User
+from rabbitmq import rabbit
+
 
 from .dependencies import bcrypt_context, oauth2_scheme
 
@@ -53,17 +56,17 @@ async def handle_login(user: User):
 
 
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)], db: AsyncSession
+    db: Annotated[AsyncSession, Depends(get_db)],
+    token: str = Depends(oauth2_scheme),
 ):
     try:
-        payload: dict = jwt.decode(
-            token, settings.secret_key, algorithms=settings.algorithm
-        )
+        payload = jwt.decode(token, settings.secret_key, algorithms=settings.algorithm)
         id: str = payload.get("id")
         if id is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
-        user: User = await postgres.read_by_id(id, db)
-
+        user = await postgres.read_by_id(id, db)
+        if user is None:
+            raise HTTPException(status_code=401, detail="Could not validate the user.")
         return user
 
     except JWTError:
@@ -73,10 +76,15 @@ async def get_current_user(
 async def authenticate_user(email: str, password: str, db: AsyncSession):
     user: User = await postgres.read(email, db)
     if user is None:
-        return False
+        raise HTTPException(status_code=401, detail="Could not validate the user.")
     if not bcrypt_context.verify(password, user.password):
-        return False
+        raise HTTPException(status_code=401, detail="Could not validate the user.")
     return user
+
+async def verify_password(user : User, password : str):
+    if not bcrypt_context.verify(password, user.password):
+        raise HTTPException(status_code=401, detail="Could not validate the user.")
+    return True
 
 
 async def is_blocked(token: str = Depends(oauth2_scheme)):
@@ -89,5 +97,11 @@ async def block_token(token: str = Depends(oauth2_scheme)):
     await redis_.create(token, "blocked")
 
 
-async def authorize(token: str = Depends(oauth2_scheme)):
+def authorize(token: str = Depends(oauth2_scheme)):
+    print(token)
     return token
+
+
+async def send_email(email: str):
+    async with rabbit:
+        await rabbit.publish(email, "change_email")

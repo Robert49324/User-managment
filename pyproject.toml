@@ -10,7 +10,7 @@ python = "^3.12"
 fastapi = "^0.109.2"
 uvicorn = "^0.27.0.post1"
 sqlalchemy = "^2.0.25"
-pydantic = "^2.6.1"
+pydantic = {extras = ["email"], version = "^2.6.2"}
 pydantic-settings = "^2.1.0"
 python-jose = "^3.3.0"
 passlib = "^1.7.4"
@@ -21,6 +21,11 @@ redis = "^5.0.1"
 python-abc = "^0.2.0"
 asyncpg = "^0.29.0"
 psycopg2 = "^2.9.9"
+aio-pika = "^9.4.0"
+localstack = "^3.1.0"
+aioboto3 = "^12.3.0"
+python-io = "^0.3"
+fastapi-pagination = "^0.12.17"
 
 
 [build-system]
