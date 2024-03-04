@@ -16,7 +16,7 @@ jobs:
       RABBITMQ_USER: user
       RABBITMQ_PASSWORD: password
       LOCALSTACK_URL: http://localstack:4566
-      AWS_ACCESS_KEY_I: =admin
+      AWS_ACCESS_KEY_I: admin
       AWS_SECRET_ACCESS_KEY: admin
       AWS_BUCKET: images
       SECRET_KEY: DZn7NOmHr15c8e4siT7v1aB4FV5nYmmP
@@ -72,9 +72,9 @@ jobs:
           echo $AWS_SECRET_ACCESS_KEY 
           echo $AWS_BUCKET 
           echo $SECRET_KEY 
-          echo $ALGORITHM 
+          echo $ALGORITHM
           echo $HOST
-          echo $PORT 
+          echo $PORT
 
           poetry run alembic upgrade head
 
