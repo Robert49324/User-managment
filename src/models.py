@@ -12,7 +12,7 @@ from sqlalchemy.sql import func
 from config import settings
 
 engine = create_async_engine(
-    f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@postgres:5432/{settings.postgres_database}"
+    settings.postgres_url,
 )
 Base = declarative_base()
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

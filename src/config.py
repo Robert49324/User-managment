@@ -5,9 +5,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     # postgres
-    postgres_user: str
-    postgres_password: str
-    postgres_database: str
+    postgres_url : str
 
     # redis
     redis_url: str
