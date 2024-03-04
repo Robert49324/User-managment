@@ -42,9 +42,9 @@ jobs:
 
       - name: Migrations
         env:  
-          PYPATH: ${{ github.workspace }}/src
+          PYTHONPATH: ${{ github.workspace }}/src
         run: |
-          echo $PYPATH 
+          echo $PYTHONPATH 
           poetry run alembic upgrade head
 
       - name: Run tests
