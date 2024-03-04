@@ -54,14 +54,6 @@ jobs:
           pip install poetry
           poetry install
 
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          until pg_isready -h localhost -p 5432 -U admin; do
-            echo "PostgreSQL is unavailable - sleeping"
-            sleep 2
-          done
-          echo "PostgreSQL is ready - continuing"
-
       - name: Migrations
         run: |
           poetry run alembic upgrade head
