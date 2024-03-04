@@ -17,6 +17,7 @@ class RabbitMQ:
         await self.connection.close()
 
     async def publish(self, message: str, routing_key: str):
+        print(settings.rabbitmq_password, settings.rabbitmq_user)
         channel = await self.connection.channel()
         await channel.default_exchange.publish(
             Message(message.encode("utf-8")), routing_key=routing_key
