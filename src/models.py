@@ -6,7 +6,7 @@ from sqlalchemy import (UUID, Boolean, Column, DateTime, Enum, ForeignKey,
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Mapped, mapped_column, relationship, sessionmaker
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
 from config import settings
