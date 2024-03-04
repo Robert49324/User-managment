@@ -83,4 +83,6 @@ jobs:
 
       - name: Run tests
         run: |
+          echo $RABBITMQ_PASSWORD
+          echo $RABBITMQ_USER
           poetry run pytest
