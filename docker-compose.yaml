@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   postgres:
     image: postgres:16-alpine
@@ -22,7 +22,7 @@ services:
       - REDIS_PORT=${REDIS_PORT}
     networks:
       - backend
-    
+
   rabbitmq:
     image: rabbitmq:3.12-alpine
     hostname: rabbitmq
@@ -59,7 +59,7 @@ services:
       - postgres
     networks:
       - backend
-  
+
 networks:
   backend:
     driver: bridge

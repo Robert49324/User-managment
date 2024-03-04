@@ -8,21 +8,37 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: ${{ github.workspace }}/src
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "admin"
-      POSTGRES_DATABASE: "user_management"
-      REDIS_URL: "redis://redis:6379"
-      REDIS_PORT: "6379"
-      RABBITMQ_USER: "user"
-      RABBITMQ_PASSWORD: "password"
-      LOCALSTACK_URL: "http://localstack:4566"
-      AWS_ACCESS_KEY_ID: "admin"
-      AWS_SECRET_ACCESS_KEY: "admin"
-      AWS_BUCKET: "images"
-      SECRET_KEY: "DZn7NOmHr15c8e4siT7v1aB4FV5nYmmP"
-      ALGORITHM: "HS256"
-      HOST: "0.0.0.0"
-      PORT: "8000"
+      # POSTGRES_USER: "admin"
+      # POSTGRES_PASSWORD: "admin"
+      # POSTGRES_DATABASE: "user_management"
+      # REDIS_URL: "redis://redis:6379"
+      # REDIS_PORT: "6379"
+      # RABBITMQ_USER: "user"
+      # RABBITMQ_PASSWORD: "password"
+      # LOCALSTACK_URL: "http://localstack:4566"
+      # AWS_ACCESS_KEY_ID: "admin"
+      # AWS_SECRET_ACCESS_KEY: "admin"
+      # AWS_BUCKET: "images"
+      # SECRET_KEY: "DZn7NOmHr15c8e4siT7v1aB4FV5nYmmP"
+      # ALGORITHM: "HS256"
+      # HOST: "0.0.0.0"
+      # PORT: "8000"
+
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
+      RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
+      RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+      LOCALSTACK_URL: ${{ secrets.LOCALSTACK_URL }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      ALGORITHM: ${{ secrets.ALGORITHM }}
+      HOST: ${{ secrets.HOST }}
+      PORT: 8000
 
     services:
       postgres:
@@ -34,6 +50,30 @@ jobs:
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: admin
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+      redis:
+        image: redis:7.2.4-alpine
+        ports:
+          - "6379:6379"
+        env:
+          ALLOW_EMPTY_PASSWORD : yes
+          REDIS_PORT : ${REDIS_PORT}
+      
+      rabbitmq:
+        image: rabbitmq:3.12-alpine
+        env:
+          RABBITMQ_DEFAULT_USER : ${RABBITMQ_USER}
+          RABBITMQ_DEFAULT_PASS : ${RABBITMQ_PASSWORD}
+          RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS : -rabbit disk_free_limit 2147483648
+        ports:
+          - 15672:15672
+      
+      localstack:
+        image: localstack/localstack
+        env:
+          SERVICES : s3
+        ports:
+          - 4566:4566
 
     steps:
       - name: Install PostgreSQL client
