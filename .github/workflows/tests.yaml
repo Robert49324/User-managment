@@ -6,6 +6,23 @@ jobs:
   testing:
     name: testing
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DATABASE: user_management
+      REDIS_URL: redis://redis:6379
+      REDIS_PORT: 6379
+      RABBITMQ_USER: user
+      RABBITMQ_PASSWORD: password
+      LOCALSTACK_URL: http://localstack:4566
+      AWS_ACCESS_KEY_I: =admin
+      AWS_SECRET_ACCESS_KEY: admin
+      AWS_BUCKET: images
+      SECRET_KEY: DZn7NOmHr15c8e4siT7v1aB4FV5nYmmP
+      ALGORITHM: HS256
+      HOST: 0.0.0.0
+      PORT: 8000
 
     services:
       postgres:
@@ -41,18 +58,10 @@ jobs:
           poetry install
 
       - name: Migrations
-        env:  
-          PYTHONPATH: ${{ github.workspace }}/src
         run: |
           echo $PYTHONPATH 
           poetry run alembic upgrade head
 
       - name: Run tests
-        env:
-          PG_USER: test
-          PG_PASSWORD: test
-          PG_HOST: localhost
-          PG_PORT: 5432
-          PG_DATABASE: test_db
         run: |
           poetry run pytest
