@@ -41,6 +41,8 @@ jobs:
           poetry install
 
       - name: Migrations
+        env:  
+          PYPATH: ${{ github.workspace }}/src
         run: |
           poetry run alembic upgrade head
 
