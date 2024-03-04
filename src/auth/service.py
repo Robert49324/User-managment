@@ -12,7 +12,6 @@ from database import get_db, postgres, redis_
 from models import User
 from rabbitmq import rabbit
 
-
 from .dependencies import bcrypt_context, oauth2_scheme
 
 
@@ -81,7 +80,8 @@ async def authenticate_user(email: str, password: str, db: AsyncSession):
         raise HTTPException(status_code=401, detail="Could not validate the user.")
     return user
 
-async def verify_password(user : User, password : str):
+
+async def verify_password(user: User, password: str):
     if not bcrypt_context.verify(password, user.password):
         raise HTTPException(status_code=401, detail="Could not validate the user.")
     return True

@@ -1,13 +1,12 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.service import (authenticate_user, authorize, block_token,
                           get_current_user, handle_login, is_blocked,
                           send_email, verify_password)
-from database import get_db, postgres, redis_
+from database import get_db, postgres
 from logger import logger
 from models import User
 
@@ -56,11 +55,15 @@ async def refresh_token(
     return await handle_login(user)
 
 
-@auth.post("/reset_password")
+@auth.post("/reset_password", status_code=200)
 async def reset_password(
-    db: Annotated[AsyncSession, Depends(get_db)], request: ResetPasswordRequest, user: User = Depends(get_current_user)
+    db: Annotated[AsyncSession, Depends(get_db)],
+    request: ResetPasswordRequest,
+    user: User = Depends(get_current_user),
 ):
     if await verify_password(user, request.password):
-        await postgres.update({"password": bcrypt_context.hash(request.new_password)}, db, user.id)
+        await postgres.update(
+            {"password": bcrypt_context.hash(request.new_password)}, db, user.id
+        )
         await send_email(request.email)
-    
+    return {"detail": "Password successfully reset."}
