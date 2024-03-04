@@ -6,7 +6,7 @@ from config import settings
 class RabbitMQ:
     def __init__(self):
         self.address = (
-            f"amqp://{settings.rabbitmq_user}:{settings.rabbitmq_password}@localhost/"
+            f"amqp://admin:admin@localhost/"
         )
 
     async def __aenter__(self):
