@@ -54,25 +54,16 @@ jobs:
           pip install poetry
           poetry install
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432 -U admin; do
+            echo "PostgreSQL is unavailable - sleeping"
+            sleep 2
+          done
+          echo "PostgreSQL is ready - continuing"
+
       - name: Migrations
         run: |
-          echo $PYTHONPATH 
-          echo $POSTGRES_USER
-          echo $POSTGRES_PASSWORD 
-          echo $POSTGRES_DATABASE 
-          echo $REDIS_URL
-          echo $REDIS_PORT 
-          echo $RABBITMQ_USER 
-          echo $RABBITMQ_PASSWORD 
-          echo $LOCALSTACK_URL
-          echo $AWS_ACCESS_KEY_I
-          echo $AWS_SECRET_ACCESS_KEY 
-          echo $AWS_BUCKET 
-          echo $SECRET_KEY 
-          echo $ALGORITHM
-          echo $HOST
-          echo $PORT
-
           poetry run alembic upgrade head
 
       - name: Run tests

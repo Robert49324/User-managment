@@ -31,6 +31,7 @@ pytest-asyncio = "^0.23.5"
 aiosqlite = "^0.20.0"
 pytest-postgresql = "^5.1.0"
 async-asgi-testclient = "^1.4.11"
+pytest-cov = "^4.1.0"
 
 
 [build-system]

@@ -1,4 +1,6 @@
 import asyncio
+import os
+import sys
 from typing import AsyncGenerator, Generator
 
 import pytest
@@ -6,7 +8,6 @@ import pytest_asyncio
 from async_asgi_testclient import TestClient
 
 from src.main import app
-
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
