@@ -78,6 +78,7 @@ jobs:
 
       - name: Migrations
         run: |
+          echo $POSTGRES_URL
           poetry run alembic upgrade head
 
       - name: Run tests
