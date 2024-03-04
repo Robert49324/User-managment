@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: ${{ github.workspace }}/src
-      POSTGRES_HOST : ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_URL : ${{ secrets.POSTGRES_HOST }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
       REDIS_PORT: ${{ secrets.REDIS_PORT }}
       RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
