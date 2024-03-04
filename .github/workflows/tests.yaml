@@ -8,22 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: ${{ github.workspace }}/src
-      # POSTGRES_USER: "admin"
-      # POSTGRES_PASSWORD: "admin"
-      # POSTGRES_DATABASE: "user_management"
-      # REDIS_URL: "redis://redis:6379"
-      # REDIS_PORT: "6379"
-      # RABBITMQ_USER: "user"
-      # RABBITMQ_PASSWORD: "password"
-      # LOCALSTACK_URL: "http://localstack:4566"
-      # AWS_ACCESS_KEY_ID: "admin"
-      # AWS_SECRET_ACCESS_KEY: "admin"
-      # AWS_BUCKET: "images"
-      # SECRET_KEY: "DZn7NOmHr15c8e4siT7v1aB4FV5nYmmP"
-      # ALGORITHM: "HS256"
-      # HOST: "0.0.0.0"
-      # PORT: "8000"
-
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
