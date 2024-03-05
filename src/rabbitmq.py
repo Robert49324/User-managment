@@ -33,7 +33,7 @@ class RabbitMqMock:
             pass
 
 def get_rabbitmq():
-    if os.getenv("TESTING" is True):
+    if os.getenv("TESTING" is "True"):
         return RabbitMqMock()
     return RabbitMQ()
 
