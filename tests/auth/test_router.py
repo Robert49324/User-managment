@@ -87,11 +87,10 @@ async def test_reset_password(client, mocker):
         async def publish(self, message: str, routing_key: str):
             print(f"Resetting password for {message}")
     
-    def mock_send_email(email):
-        print(f"Sending email to {email}")
+    def mock_get_rabbitmq():
+        return Mock_RabbitMQ()
         
-    mocker.patch("src.rabbitmq.RabbitMQ", Mock_RabbitMQ)
-    mocker.patch("src.auth.service.send_email", mock_send_email)
+    mocker.patch("src.rabbitmq.get_rabbitmq", mock_get_rabbitmq)
         
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
