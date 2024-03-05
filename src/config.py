@@ -28,6 +28,7 @@ class Settings(BaseSettings):
 
 
 class TestSettings(BaseSettings):
+    model_config = SettingsConfigDict(extra="ignore")
     # postgres
     postgres_url: str
 
