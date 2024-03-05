@@ -16,15 +16,11 @@ from src.rabbitmq import RabbitMQ
 def get_settings_override():
     return TestSettings()
 
-class MockRabbitMQ:
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        pass
-
-    async def publish(self, message: str, routing_key: str):
-        print(f"Mock publish: {message} to {routing_key}")
+@pytest.fixture
+def mock_rabbitmq():
+    rabbitmq_mock = MagicMock()
+    rabbitmq_mock.publish.return_value = None
+    return rabbitmq_mock
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
@@ -37,6 +33,6 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
 async def client() -> AsyncGenerator[TestClient, None]:
     host, port = "127.0.0.1", "8000"
     scope = {"client": (host, port)}
-
+    app.dependency_overrides[RabbitMQ] = lambda: mock_rabbitmq
     async with TestClient(app, scope=scope) as client:
         yield client
