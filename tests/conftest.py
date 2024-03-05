@@ -12,12 +12,8 @@ from src.config import TestSettings
 from src.main import app
 
 
-
 def get_settings_override():
     return TestSettings()
-
-# def get_S3Client_override():
-#     return MagicMock()
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:

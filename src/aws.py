@@ -37,7 +37,5 @@ class S3Client:
             except Exception as e:
                 return False
 
-def get_S3Client():
-    return S3Client()
 
-s3 = get_S3Client()
+s3 = S3Client()
