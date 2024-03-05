@@ -20,11 +20,11 @@ def get_rabbitmq_override():
     class RabbitMqMock:
         def __init__(self):
             pass
-        def __aenter__(self):
+        async def __aenter__(self):
             pass
-        def __aexit__(self, exc_type, exc, tb):
+        async def __aexit__(self, exc_type, exc, tb):
             pass
-        def publish(self, message: str, routing_key: str):
+        async def publish(self, message: str, routing_key: str):
             pass
     return RabbitMqMock()
 
