@@ -17,9 +17,7 @@ def get_settings_override():
     return TestSettings()
 
 def get_rabbitmq_override():
-    RabbitMQMock = MagicMock()
-    RabbitMQMock.publish.return_value = None
-    return RabbitMQMock()
+    return MagicMock()
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
