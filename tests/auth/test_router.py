@@ -2,11 +2,6 @@ import time
 
 import pytest
 
-from tests.conftest import MockRabbitMQ
-
-
-
-
 @pytest.mark.asyncio
 async def test_signup(client):
     response = await client.post(
@@ -80,10 +75,7 @@ async def test_refresh_token_wrong_token(client):
 
 
 @pytest.mark.asyncio
-async def test_reset_password(client, monkeypatch):
-    
-    monkeypatch.setattr('src.rabbitmq.RabbitMQ', MockRabbitMQ)
-    
+async def test_reset_password(client):    
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
@@ -102,10 +94,7 @@ async def test_reset_password(client, monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_reset_password_wrong_password(client, monkeypatch):
-    
-    monkeypatch.setattr('src.rabbitmq.RabbitMQ', MockRabbitMQ)
-    
+async def test_reset_password_wrong_password(client):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "new_password"}
     )
