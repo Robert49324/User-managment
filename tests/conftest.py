@@ -22,16 +22,12 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     yield loop
     loop.close()
 
-@pytest.fixture
-async def mock_amqp():
-    async with create_amqp_mock() as mock:
-        yield mock
 
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[TestClient, None]:
     host, port = "127.0.0.1", "8000"
     scope = {"client": (host, port)}
     app.dependency_overrides[get_settings] = get_settings_override
-    app.dependency_overrides[get_rabbitmq] = MagicMock(return_value=mock_amqp)
+    app.dependency_overrides[get_rabbitmq] = None
     async with TestClient(app, scope=scope) as client:
         yield client
