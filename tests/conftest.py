@@ -16,9 +16,6 @@ from src.rabbitmq import RabbitMQ
 def get_settings_override():
     return TestSettings()
 
-def get_rabbitmq_override():
-    return MagicMock()
-
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     loop = asyncio.get_event_loop_policy().new_event_loop()

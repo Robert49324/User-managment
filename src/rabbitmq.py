@@ -22,7 +22,5 @@ class RabbitMQ:
             Message(message.encode("utf-8")), routing_key=routing_key
         )
 
-def get_rabbitmq():
-    return RabbitMQ()
 
-rabbit = get_rabbitmq()
+rabbit = RabbitMQ()
