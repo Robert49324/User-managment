@@ -3,6 +3,7 @@ import os
 import sys
 from typing import AsyncGenerator, Generator
 from unittest.mock import MagicMock
+from amqp_mock import create_amqp_mock
 
 import pytest
 import pytest_asyncio
@@ -10,7 +11,7 @@ from async_asgi_testclient import TestClient
 
 from src.config import TestSettings
 from src.main import app
-from amqp_mock import create_amqp_mock
+from src.rabbitmq import get_rabbitmq
 
 def get_settings_override():
     return TestSettings()
@@ -30,5 +31,7 @@ async def mock_amqp():
 async def client() -> AsyncGenerator[TestClient, None]:
     host, port = "127.0.0.1", "8000"
     scope = {"client": (host, port)}
+    app.dependency_overrides[get_settings] = get_settings_override
+    app.dependency_overrides[get_rabbitmq] = MagicMock(return_value=mock_amqp)
     async with TestClient(app, scope=scope) as client:
         yield client
