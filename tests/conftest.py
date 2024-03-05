@@ -10,14 +10,14 @@ from async_asgi_testclient import TestClient
 
 from src.config import TestSettings
 from src.main import app
-from src.rabbitmq import RabbitMQ
+
 
 
 def get_settings_override():
     return TestSettings()
 
-async def send_email_override():
-    return None
+def get_S3Client_override():
+    return MagicMock()
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
