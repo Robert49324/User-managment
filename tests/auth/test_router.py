@@ -1,15 +1,9 @@
 import time
-from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from src.rabbitmq import RabbitMQ
 
-@pytest.fixture
-def mock_rabbitmq():
-    rabbitmq_mock = MagicMock(spec=RabbitMQ)
-    rabbitmq_mock.publish.return_value = None
-    return rabbitmq_mock
+
 
 @pytest.mark.asyncio
 async def test_signup(client):
@@ -84,7 +78,7 @@ async def test_refresh_token_wrong_token(client):
 
 
 @pytest.mark.asyncio
-async def test_reset_password(client, rabbitmq_mock):
+async def test_reset_password(client, mock_rabbitmq):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
@@ -103,7 +97,7 @@ async def test_reset_password(client, rabbitmq_mock):
 
 
 @pytest.mark.asyncio
-async def test_reset_password_wrong_password(client, rabbitmq_mock):
+async def test_reset_password_wrong_password(client, mock_rabbitmq):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "new_password"}
     )
