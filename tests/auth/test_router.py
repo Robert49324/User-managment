@@ -74,16 +74,24 @@ async def test_refresh_token_wrong_token(client):
     assert response.json() == {"detail": "Could not validate the user."}
 
 
+import pytest
+from unittest.mock import AsyncMock
+
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
-    
+    async def mock_aenter():
+        return None 
+
+    async def mock_aexit(exc_type, exc, tb):
+        pass 
+
     async def mock_publish(message: str, routing_key: str):
         print(f"publish {message} at {routing_key}")
+
+    mocker.patch("src.rabbitmq.RabbitMQ.__aenter__", AsyncMock(side_effect=mock_aenter))
+    mocker.patch("src.rabbitmq.RabbitMQ.__aexit__", AsyncMock(side_effect=mock_aexit))
     
-    mocker.patch(
-        "src.rabbitmq.RabbitMQ.publish",
-        mock_publish
-    )
+    mocker.patch("src.rabbitmq.RabbitMQ.publish", mock_publish)
         
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
@@ -100,6 +108,7 @@ async def test_reset_password(client, mocker):
         headers=headers,
     )
     assert response.status_code == 200
+
 
 
 @pytest.mark.asyncio
