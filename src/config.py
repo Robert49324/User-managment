@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,8 +12,8 @@ class Settings(BaseSettings):
     redis_url: str
 
     # rabbitmq
-    rabbitmq_user: str
-    rabbitmq_password: str
+    rabbitmq_user: str = Field(default="admin")
+    rabbitmq_password: str = Field(default="admin")
 
     # localstack
     localstack_url: str
@@ -35,10 +36,6 @@ class TestSettings(BaseSettings):
 
     # redis
     redis_url: str
-
-    # rabbitmq
-    # rabbitmq_user: str
-    # rabbitmq_password: str
 
     # localstack
     localstack_url: str
