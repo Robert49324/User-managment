@@ -36,6 +36,6 @@ def get_rabbitmq():
     # if os.getenv("TESTING") == True:
     #     return RabbitMqMock()
     # return RabbitMQ()
-    return RabbitMqMock
+    return RabbitMqMock()
 
 rabbit = get_rabbitmq()
