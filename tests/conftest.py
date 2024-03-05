@@ -16,8 +16,7 @@ from src.rabbitmq import get_rabbitmq
 def get_settings_override():
     return TestSettings()
 
-def get_rabbitmq_override():
-    class RabbitMqMock:
+class RabbitMqMock:
         def __init__(self):
             pass
         async def __aenter__(self):
@@ -26,6 +25,8 @@ def get_rabbitmq_override():
             pass
         async def publish(self, message: str, routing_key: str):
             pass
+
+def get_rabbitmq_override():
     return RabbitMqMock()
 
 @pytest.fixture(scope="session")
