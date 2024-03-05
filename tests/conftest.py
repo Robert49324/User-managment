@@ -10,7 +10,7 @@ from async_asgi_testclient import TestClient
 
 from src.config import TestSettings
 from src.main import app
-
+from amqp_mock import create_amqp_mock
 
 def get_settings_override():
     return TestSettings()
@@ -21,6 +21,10 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     yield loop
     loop.close()
 
+@pytest.fixture
+async def mock_amqp():
+    async with create_amqp_mock() as mock:
+        yield mock
 
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[TestClient, None]:

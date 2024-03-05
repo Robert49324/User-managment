@@ -228,6 +228,21 @@ typing-extensions = ">=4"
 tz = ["backports.zoneinfo"]
 
 [[package]]
+name = "amqp-mock"
+version = "0.6.1"
+description = "Remote AMQP mock"
+optional = false
+python-versions = ">=3.8.0"
+files = [
+    {file = "amqp-mock-0.6.1.tar.gz", hash = "sha256:5933c406e1163a9638643908f5163b324e39f3829899b10279196400fd418ec0"},
+    {file = "amqp_mock-0.6.1-py3-none-any.whl", hash = "sha256:4e6fd218d40e42b204d93689abc9c06846f98c1f95d29f3268e944d3579cef7e"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.5,<4.0"
+pamqp = ">=3.0,<4.0"
+
+[[package]]
 name = "annotated-types"
 version = "0.6.0"
 description = "Reusable constraint types to use with typing.Annotated"
@@ -2589,4 +2604,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "624bcd27b64811ee16e93053f5a84a6a53dec48014947eea01a3655a10666cf7"
+content-hash = "8397292f04dcf9bcc3cf3534f9ee9d9af426042ff29a09bcc139843d079f7a2c"
