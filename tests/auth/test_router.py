@@ -73,10 +73,6 @@ async def test_refresh_token_wrong_token(client):
     assert response.status_code == 401
     assert response.json() == {"detail": "Could not validate the user."}
 
-
-import pytest
-from unittest.mock import AsyncMock
-
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
     async def mock_send_email(email : str):
