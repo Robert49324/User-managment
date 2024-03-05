@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
 
 class TestSettings(BaseSettings):
-    testing : bool
+    testing: bool
     # postgres
     postgres_url: str
 

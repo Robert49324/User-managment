@@ -3,9 +3,16 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.service import (authenticate_user, authorize, block_token,
-                          get_current_user, handle_login, is_blocked,
-                          send_email, verify_password)
+from auth.service import (
+    authenticate_user,
+    authorize,
+    block_token,
+    get_current_user,
+    handle_login,
+    is_blocked,
+    send_email,
+    verify_password,
+)
 from database import get_db, postgres
 from logger import logger
 from models import User

@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+
 @pytest.mark.asyncio
 async def test_signup(client):
     response = await client.post(
@@ -74,8 +75,9 @@ async def test_refresh_token_wrong_token(client):
     assert response.status_code == 401
     assert response.json() == {"detail": "Could not validate the user."}
 
+
 @pytest.mark.asyncio
-async def test_reset_password(client, mocker):        
+async def test_reset_password(client, mocker):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
@@ -91,7 +93,6 @@ async def test_reset_password(client, mocker):
         headers=headers,
     )
     assert response.status_code == 200
-
 
 
 @pytest.mark.asyncio

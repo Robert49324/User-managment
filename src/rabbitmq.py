@@ -1,13 +1,13 @@
+import os
+
 from aio_pika import Message, connect
 
 from config import settings
-import os
+
 
 class RabbitMQ:
     def __init__(self):
-        self.address = (
-            f"amqp://admin:admin@rabbitmq/"
-        )
+        self.address = f"amqp://admin:admin@rabbitmq/"
 
     async def __aenter__(self):
         self.connection = await connect(self.address)
@@ -20,7 +20,8 @@ class RabbitMQ:
         channel = await self.connection.channel()
         await channel.default_exchange.publish(
             Message(message.encode("utf-8")), routing_key=routing_key
-#         )
+        )
+
 
 # class RabbitMQMock:
 #         def __init__(self):
@@ -32,7 +33,9 @@ class RabbitMQ:
 #         async def publish(self, message: str, routing_key: str):
 #             pass
 
+
 def get_rabbitmq():
     return RabbitMQ()
+
 
 rabbit = get_rabbitmq()
