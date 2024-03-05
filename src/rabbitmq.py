@@ -7,7 +7,7 @@ from config import settings
 
 class RabbitMQ:
     def __init__(self):
-        self.address = f"amqp://admin:admin@rabbitmq/"
+        self.address = f"amqp://{settings.rabbitmq_user}:{settings.rabbitmq_password}@@rabbitmq/"
 
     async def __aenter__(self):
         self.connection = await connect(self.address)
@@ -36,11 +36,8 @@ class RabbitMQMock:
 
 def get_rabbitmq():
     testing = os.getenv("TESTING")
-    print(testing)
     if testing:
         return RabbitMQMock()
     return RabbitMQ()
-
-
 
 rabbit = get_rabbitmq()

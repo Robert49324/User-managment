@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     redis_url: str
 
     # rabbitmq
-    # rabbitmq_user: str
-    # rabbitmq_password: str
+    rabbitmq_user: str
+    rabbitmq_password: str
 
     # localstack
     localstack_url: str
@@ -28,7 +28,8 @@ class Settings(BaseSettings):
 
 
 class TestSettings(BaseSettings):
-    testing: bool
+    model_config = SettingsConfigDict(extra="ignore")
+    
     # postgres
     postgres_url: str
 
