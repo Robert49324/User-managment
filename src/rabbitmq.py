@@ -23,19 +23,22 @@ class RabbitMQ:
         )
 
 
-# class RabbitMQMock:
-#         def __init__(self):
-#             pass
-#         async def __aenter__(self):
-#             pass
-#         async def __aexit__(self, exc_type, exc, tb):
-#             pass
-#         async def publish(self, message: str, routing_key: str):
-#             pass
+class RabbitMQMock:
+        def __init__(self):
+            pass
+        async def __aenter__(self):
+            pass
+        async def __aexit__(self, exc_type, exc, tb):
+            pass
+        async def publish(self, message: str, routing_key: str):
+            pass
 
 
 def get_rabbitmq():
+    if os.getenv("TESTING") == True:
+        return RabbitMQMock()
     return RabbitMQ()
 
 
-rabbit = get_rabbitmq()
+
+# rabbit = get_rabbitmq()

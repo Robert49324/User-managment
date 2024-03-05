@@ -11,29 +11,28 @@ from async_asgi_testclient import TestClient
 
 from src.config import TestSettings, get_settings
 from src.main import app
-from src.rabbitmq import get_rabbitmq
 
 
 def get_settings_override():
     return TestSettings()
 
 
-class RabbitMqMock:
-    def __init__(self):
-        pass
+# class RabbitMqMock:
+#     def __init__(self):
+#         pass
 
-    async def __aenter__(self):
-        pass
+#     async def __aenter__(self):
+#         pass
 
-    async def __aexit__(self, exc_type, exc, tb):
-        pass
+#     async def __aexit__(self, exc_type, exc, tb):
+#         pass
 
-    async def publish(self, message: str, routing_key: str):
-        pass
+#     async def publish(self, message: str, routing_key: str):
+#         pass
 
 
-def get_rabbitmq_override():
-    return RabbitMqMock()
+# def get_rabbitmq_override():
+#     return RabbitMqMock()
 
 
 @pytest.fixture(scope="session")
@@ -48,6 +47,6 @@ async def client() -> AsyncGenerator[TestClient, None]:
     host, port = "127.0.0.1", "8000"
     scope = {"client": (host, port)}
     app.dependency_overrides[get_settings] = get_settings_override
-    app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
+    # app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
     async with TestClient(app, scope=scope) as client:
         yield client
