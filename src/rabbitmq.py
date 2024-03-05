@@ -35,7 +35,9 @@ class RabbitMQMock:
 
 
 def get_rabbitmq():
-    if os.getenv("TESTING") == True:
+    testing = os.getenv("TESTING")
+    print(testing)
+    if testing:
         return RabbitMQMock()
     return RabbitMQ()
 
