@@ -16,11 +16,16 @@ from src.rabbitmq import RabbitMQ
 def get_settings_override():
     return TestSettings()
 
-@pytest.fixture
-def mock_rabbitmq():
-    rabbitmq_mock = MagicMock(spec=RabbitMQ)
-    rabbitmq_mock.publish.return_value = None
-    return rabbitmq_mock
+class MockRabbitMQ:
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        pass
+
+    async def publish(self, message: str, routing_key: str):
+        # Mock publish operation, for example, print the message
+        print(f"Mock publish: {message} to {routing_key}")
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
