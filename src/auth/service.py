@@ -102,6 +102,6 @@ def authorize(token: str = Depends(oauth2_scheme)):
     return token
 
 
-async def send_email(email: str, rabbit):
+async def send_email(email: str):
     async with rabbit:
         await rabbit.publish(email, "change_email")
