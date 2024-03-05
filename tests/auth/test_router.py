@@ -3,8 +3,6 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from src.rabbitmq import RabbitMQ
-
 @pytest.mark.asyncio
 async def test_signup(client):
     response = await client.post(
@@ -75,16 +73,6 @@ async def test_refresh_token_wrong_token(client):
     response = await client.post("/auth/refresh_token", headers=headers)
     assert response.status_code == 401
     assert response.json() == {"detail": "Could not validate the user."}
-
-
-async def mock_rabbit(mock_amqp):
-    rabbit_address = "amqp://guest:guest@localhost/"
-    
-    rabbit_mock = RabbitMQ(rabbit_address)
-    rabbit_mock.__aenter__ = AsyncMock(return_value=rabbit_mock)
-    rabbit_mock.__aexit__ = AsyncMock(return_value=None)
-    rabbit_mock.publish = AsyncMock(return_value=None)
-    return rabbit_mock
 
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):        
