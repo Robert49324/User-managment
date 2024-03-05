@@ -41,4 +41,4 @@ def get_rabbitmq():
 
 
 
-# rabbit = get_rabbitmq()
+rabbit = get_rabbitmq()
