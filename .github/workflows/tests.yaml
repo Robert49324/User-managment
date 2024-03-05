@@ -13,6 +13,7 @@ jobs:
       REDIS_PORT: ${{ secrets.REDIS_PORT }}
       # RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
       # RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+      TESTING : ${{ secrets.TESTING }}
       LOCALSTACK_URL: ${{ secrets.LOCALSTACK_URL }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

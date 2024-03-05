@@ -21,7 +21,7 @@ def get_rabbitmq_override():
         def __init__(self):
             pass
         def __aenter__(self):
-            return create_amqp_mock()
+            pass
         def __aexit__(self, exc_type, exc, tb):
             pass
         def publish(self, message: str, routing_key: str):

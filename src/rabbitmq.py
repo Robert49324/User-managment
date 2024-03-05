@@ -1,7 +1,7 @@
 from aio_pika import Message, connect
 
 from config import settings
-
+import os
 
 class RabbitMQ:
     def __init__(self):
@@ -22,7 +22,19 @@ class RabbitMQ:
             Message(message.encode("utf-8")), routing_key=routing_key
         )
 
+class RabbitMqMock:
+        def __init__(self):
+            pass
+        def __aenter__(self):
+            pass
+        def __aexit__(self, exc_type, exc, tb):
+            pass
+        def publish(self, message: str, routing_key: str):
+            pass
+
 def get_rabbitmq():
+    if os.getenv("TESTING" is True):
+        return RabbitMqMock()
     return RabbitMQ()
 
 rabbit = get_rabbitmq()
