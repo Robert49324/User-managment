@@ -24,7 +24,6 @@ class MockRabbitMQ:
         pass
 
     async def publish(self, message: str, routing_key: str):
-        # Mock publish operation, for example, print the message
         print(f"Mock publish: {message} to {routing_key}")
 
 @pytest.fixture(scope="session")
