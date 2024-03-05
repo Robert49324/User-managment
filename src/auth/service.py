@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from config import settings
 from database import get_db, postgres, redis_
 from models import User
-from rabbitmq import rabbit
+from rabbitmq import get_rabbitmq
 
 from .dependencies import bcrypt_context, oauth2_scheme
 
@@ -102,6 +102,6 @@ def authorize(token: str = Depends(oauth2_scheme)):
     return token
 
 
-async def send_email(email: str):
+async def send_email(email: str, rabbit = Depends(get_rabbitmq)):
     async with rabbit:
         await rabbit.publish(email, "change_email")
