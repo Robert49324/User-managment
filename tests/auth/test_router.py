@@ -77,12 +77,12 @@ async def test_refresh_token_wrong_token(client):
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
     
-    async def publish(message: str, routing_key: str):
+    async def mock_publish(message: str, routing_key: str):
         print(f"publish {message} at {routing_key}")
     
     mocker.patch(
         "src.rabbitmq.RabbitMQ.publish",
-        
+        mock_publish
     )
         
     login_response = await client.post(
