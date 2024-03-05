@@ -79,19 +79,10 @@ from unittest.mock import AsyncMock
 
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
-    async def mock_aenter():
-        return None 
-
-    async def mock_aexit(exc_type, exc, tb):
-        pass 
-
-    async def mock_publish(message: str, routing_key: str):
-        print(f"publish {message} at {routing_key}")
-
-    mocker.patch("src.rabbitmq.RabbitMQ.__aenter__", mock_aenter)
-    mocker.patch("src.rabbitmq.RabbitMQ.__aexit__", mock_aexit)
-    
-    mocker.patch("src.rabbitmq.RabbitMQ.publish", mock_publish)
+    async def mock_send_email(email : str):
+        print(f"Resetting password for {email}")
+        
+    mocker.patch("src.auth.service.send_email", mock_send_email)    
         
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
