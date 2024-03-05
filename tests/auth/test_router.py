@@ -1,4 +1,5 @@
 import time
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -74,24 +75,10 @@ async def test_refresh_token_wrong_token(client):
     assert response.json() == {"detail": "Could not validate the user."}
 
 @pytest.mark.asyncio
-async def test_reset_password(client, mocker):
-    class Mock_RabbitMQ:
-        def __init__(self):
-            print("Init rabbitMQ")
-        async def __aenter__(self):
-            print("Connecting")
-
-        async def __aexit__(self, exc_type, exc, tb):
-            print("Disconnecting")
-
-        async def publish(self, message: str, routing_key: str):
-            print(f"Resetting password for {message}")
+async def test_reset_password(client, mocker):        
+    mocker.patch("src.rabbitmq.rabbit", return_value=MagicMock())
     
-    def mock_get_rabbitmq():
-        return Mock_RabbitMQ()
-        
-    mocker.patch("src.rabbitmq.get_rabbitmq", mock_get_rabbitmq)
-        
+    
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
