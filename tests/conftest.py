@@ -9,7 +9,7 @@ import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
 
-from src.config import TestSettings
+from src.config import TestSettings, get_settings
 from src.main import app
 from src.rabbitmq import get_rabbitmq
 
