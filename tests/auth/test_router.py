@@ -88,8 +88,8 @@ async def test_reset_password(client, mocker):
     async def mock_publish(message: str, routing_key: str):
         print(f"publish {message} at {routing_key}")
 
-    mocker.patch("src.rabbitmq.RabbitMQ.__aenter__", AsyncMock(side_effect=mock_aenter))
-    mocker.patch("src.rabbitmq.RabbitMQ.__aexit__", AsyncMock(side_effect=mock_aexit))
+    mocker.patch("src.rabbitmq.RabbitMQ.__aenter__", mock_aenter)
+    mocker.patch("src.rabbitmq.RabbitMQ.__aexit__", mock_aexit)
     
     mocker.patch("src.rabbitmq.RabbitMQ.publish", mock_publish)
         
