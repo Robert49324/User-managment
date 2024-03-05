@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     # postgres
-    postgres_url : str
+    postgres_url: str
 
     # redis
     redis_url: str
@@ -25,10 +25,11 @@ class Settings(BaseSettings):
 
     host: str
     port: int
-    
+
+
 class TestSettings(BaseSettings):
     # postgres
-    postgres_url : str
+    postgres_url: str
 
     # redis
     redis_url: str
@@ -48,8 +49,10 @@ class TestSettings(BaseSettings):
 
     host: str
     port: int
+
 
 def get_settings() -> Settings:
     return Settings()
+
 
 settings = get_settings()

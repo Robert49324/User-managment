@@ -6,13 +6,14 @@ from typing import AsyncGenerator, Generator
 import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
-from src.config import TestSettings
 
+from src.config import TestSettings
 from src.main import app
 
 
 def get_settings_override():
     return TestSettings()
+
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:

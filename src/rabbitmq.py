@@ -6,7 +6,7 @@ from config import settings
 class RabbitMQ:
     def __init__(self):
         self.address = (
-            f"amqp://admin:admin@localhost/"
+            f"amqp://{settings.rabbitmq_user}:{settings.rabbitmq_password}@rabbitmq/"
         )
 
     async def __aenter__(self):
@@ -17,7 +17,6 @@ class RabbitMQ:
         await self.connection.close()
 
     async def publish(self, message: str, routing_key: str):
-        print(settings.rabbitmq_password, settings.rabbitmq_user)
         channel = await self.connection.channel()
         await channel.default_exchange.publish(
             Message(message.encode("utf-8")), routing_key=routing_key

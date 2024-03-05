@@ -1,7 +1,15 @@
 import time
+from unittest.mock import MagicMock, Mock
 
 import pytest
 
+from src.rabbitmq import RabbitMQ
+
+@pytest.fixture
+def mock_rabbitmq():
+    rabbitmq_mock = MagicMock(spec=RabbitMQ)
+    rabbitmq_mock.publish.return_value = None 
+    return rabbitmq_mock
 
 @pytest.mark.asyncio
 async def test_signup(client):
