@@ -61,13 +61,9 @@ async def reset_password(
     request: ResetPasswordRequest,
     user: User = Depends(get_current_user),
 ):
-    print(3)
     if await verify_password(user, request.password):
-        print(4)
         await postgres.update(
             {"password": bcrypt_context.hash(request.new_password)}, db, user.id
         )
-        print(4)
         await send_email(request.email)
-        print(7)
     return {"detail": "Password successfully reset."}
