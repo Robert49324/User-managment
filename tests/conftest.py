@@ -16,7 +16,7 @@ from src.rabbitmq import RabbitMQ
 def get_settings_override():
     return TestSettings()
 
-def send_email_override():
+async def send_email_override():
     return None
 
 @pytest.fixture(scope="session")
