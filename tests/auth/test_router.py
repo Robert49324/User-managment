@@ -75,10 +75,20 @@ async def test_refresh_token_wrong_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
-    async def mock_send_email(email : str):
-        print(f"Resetting password for {email}")
+    class Mock_RabbitMQ:
+        def __init__(self):
+            print("Init rabbitMQ")
+        async def __aenter__(self):
+            print("Connecting")
+
+        async def __aexit__(self, exc_type, exc, tb):
+            print("Disconnecting")
+
+        async def publish(self, message: str, routing_key: str):
+            print(f"Resetting password for {message}")
+    
         
-    mocker.patch("src.auth.service.send_email", mock_send_email)    
+    mocker.patch("src.rabbitmq.RabbitMQ", Mock_RabbitMQ)    
         
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
