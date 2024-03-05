@@ -18,7 +18,7 @@ def get_settings_override():
 
 def get_rabbitmq_override():
     RabbitMQMock = MagicMock()
-    MagicMock.publish.return_value = None
+    RabbitMQMock.publish.return_value = None
     return RabbitMQMock()
 
 @pytest.fixture(scope="session")
