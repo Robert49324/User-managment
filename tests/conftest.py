@@ -9,13 +9,13 @@ import pytest_asyncio
 # from amqp_mock import create_amqp_mock
 from async_asgi_testclient import TestClient
 
-from src.config import TestSettings, get_settings
+from src.config import get_settings#, TestSettings
 from src.main import app
 from src.rabbitmq import get_rabbitmq
 
 
-def get_settings_override():
-    return TestSettings()
+# def get_settings_override():
+#     return TestSettings()
 
 
 class RabbitMqMock:
