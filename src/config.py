@@ -36,6 +36,9 @@ class TestSettings(BaseSettings):
 
     # redis
     redis_url: str
+    
+    rabbitmq_user: str = Field(default=None)
+    rabbitmq_password: str = Field(default=None)
 
     # localstack
     localstack_url: str
