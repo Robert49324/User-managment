@@ -36,9 +36,6 @@ class TestSettings(BaseSettings):
 
     # redis
     redis_url: str
-    
-    rabbitmq_user: str = Field(default=None)
-    rabbitmq_password: str = Field(default=None)
 
     # localstack
     localstack_url: str
@@ -54,7 +51,7 @@ class TestSettings(BaseSettings):
 
 
 def get_settings() -> Settings:
-    return TestSettings()
+    return Settings()
 
 
 settings = get_settings()
