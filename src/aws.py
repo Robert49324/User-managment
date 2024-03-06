@@ -40,5 +40,3 @@ class S3Client:
 
 def get_s3_client():
     return S3Client()
-
-s3 = S3Client()
