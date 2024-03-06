@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     redis_url: str
 
     # rabbitmq
-    rabbitmq_user: str = Field(default="admin")
-    rabbitmq_password: str = Field(default="admin")
+    rabbitmq_user: str = Field(default=None)
+    rabbitmq_password: str = Field(default=None)
 
     # localstack
     localstack_url: str
