@@ -1,8 +1,6 @@
 import asyncio
-import os
-import sys
 from typing import AsyncGenerator, Generator
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 import pytest_asyncio
@@ -26,7 +24,7 @@ class RabbitMqMock:
 
 
 def get_rabbitmq_override():
-    return MagicMock()
+    return AsyncMock()
 
 
 app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
