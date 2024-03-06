@@ -7,7 +7,9 @@ from config import settings
 
 class RabbitMQ:
     def __init__(self):
-        self.address = f"amqp://{settings.rabbitmq_user}:{settings.rabbitmq_password}@@rabbitmq/"
+        self.address = (
+            f"amqp://{settings.rabbitmq_user}:{settings.rabbitmq_password}@@rabbitmq/"
+        )
 
     async def __aenter__(self):
         self.connection = await connect(self.address)
@@ -24,14 +26,17 @@ class RabbitMQ:
 
 
 class RabbitMQMock:
-        def __init__(self):
-            pass
-        async def __aenter__(self):
-            pass
-        async def __aexit__(self, exc_type, exc, tb):
-            pass
-        async def publish(self, message: str, routing_key: str):
-            pass
+    def __init__(self):
+        pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, exc_type, exc, tb):
+        pass
+
+    async def publish(self, message: str, routing_key: str):
+        pass
 
 
 def get_rabbitmq():
@@ -39,5 +44,6 @@ def get_rabbitmq():
     if testing:
         return RabbitMQMock()
     return RabbitMQ()
+
 
 rabbit = get_rabbitmq()

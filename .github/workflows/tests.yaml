@@ -41,15 +41,7 @@ jobs:
         env:
           ALLOW_EMPTY_PASSWORD : yes
           REDIS_PORT : ${REDIS_PORT}
-      
 
-      
-      localstack:
-        image: localstack/localstack
-        env:
-          SERVICES : s3
-        ports:
-          - 4566:4566
 
     steps:
       - name: Install PostgreSQL client

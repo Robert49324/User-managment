@@ -4,12 +4,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi_pagination import Page
 from fastapi_pagination.async_paginator import paginate
-from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from aws import s3
+from aws import get_s3_client
 from database import get_db, postgres
-from models import Group, User
+from models import User
 from user.service import get_current_user
 
 from .schemas import ReturnPagination, ReturnUser, UpdateRequest
@@ -101,6 +100,7 @@ async def add_image(
     db: Annotated[AsyncSession, Depends(get_db)],
     image: UploadFile = File(),
     user: User = Depends(get_current_user),
+    s3 = Depends(get_s3_client)
 ):
     if await s3.upload_fileobj(image, image.filename):
         await postgres.update({"image": image.filename}, db, user.id)

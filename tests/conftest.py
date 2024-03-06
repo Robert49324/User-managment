@@ -5,29 +5,20 @@ from unittest.mock import AsyncMock
 import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
+from src.aws import get_s3_client
 
 from src.main import app
 from src.rabbitmq import get_rabbitmq
 
-class RabbitMqMock:
-    def __init__(self):
-        pass
-
-    async def __aenter__(self):
-        pass
-
-    async def __aexit__(self, exc_type, exc, tb):
-        pass
-
-    async def publish(self, message: str, routing_key: str):
-        pass
-
 
 def get_rabbitmq_override():
+    return AsyncMock()
+def get_s3client_override():
     return AsyncMock()
 
 
 app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
+app.dependency_overrides[get_s3_client] = get_s3client_override
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
@@ -40,6 +31,6 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
 async def client() -> AsyncGenerator[TestClient, None]:
     host, port = "127.0.0.1", "8000"
     scope = {"client": (host, port)}
-    
+
     async with TestClient(app, scope=scope) as client:
         yield client

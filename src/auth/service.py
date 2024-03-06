@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from config import settings
 from database import get_db, postgres, redis_
 from models import User
+
 # from rabbitmq import rabbit
 
 from .dependencies import bcrypt_context, oauth2_scheme

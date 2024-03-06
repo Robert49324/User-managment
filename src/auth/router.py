@@ -68,7 +68,7 @@ async def reset_password(
     db: Annotated[AsyncSession, Depends(get_db)],
     request: ResetPasswordRequest,
     user: User = Depends(get_current_user),
-    rabbit = Depends(get_rabbitmq)
+    rabbit=Depends(get_rabbitmq),
 ):
     if await verify_password(user, request.password):
         await postgres.update(
