@@ -16,6 +16,7 @@ from auth.service import (
 from database import get_db, postgres
 from logger import logger
 from models import User
+from src.rabbitmq import get_rabbitmq
 
 from .dependencies import bcrypt_context
 from .schemas import LoginRequest, ResetPasswordRequest, SignUpRequest
@@ -67,10 +68,11 @@ async def reset_password(
     db: Annotated[AsyncSession, Depends(get_db)],
     request: ResetPasswordRequest,
     user: User = Depends(get_current_user),
+    rabbit = Depends(get_rabbitmq)
 ):
     if await verify_password(user, request.password):
         await postgres.update(
             {"password": bcrypt_context.hash(request.new_password)}, db, user.id
         )
-        await send_email(request.email)
+        await send_email(request.email, rabbit)
     return {"detail": "Password successfully reset."}
