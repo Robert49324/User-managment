@@ -51,7 +51,7 @@ class TestSettings(BaseSettings):
 
 
 def get_settings() -> Settings:
-    return Settings()
+    return TestSettings()
 
 
 settings = get_settings()
