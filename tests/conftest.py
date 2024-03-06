@@ -6,17 +6,10 @@ from unittest.mock import MagicMock
 
 import pytest
 import pytest_asyncio
-# from amqp_mock import create_amqp_mock
 from async_asgi_testclient import TestClient
 
-from src.config import get_settings#, TestSettings
 from src.main import app
 from src.rabbitmq import get_rabbitmq
-
-
-# def get_settings_override():
-#     return TestSettings()
-
 
 class RabbitMqMock:
     def __init__(self):
@@ -33,10 +26,9 @@ class RabbitMqMock:
 
 
 def get_rabbitmq_override():
-    return RabbitMqMock()
+    return MagicMock()
 
 
-# app.dependency_overrides[get_settings] = get_settings_override
 app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
 
 @pytest.fixture(scope="session")

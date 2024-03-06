@@ -1,6 +1,5 @@
 FROM python:3.12.1-slim
 
-ENV PYTHONPATH "/app/src"
 ENV PYTHONPATH "/app"
 
 RUN apt-get update && apt-get install -y \

@@ -1,16 +1,12 @@
-import enum
 import uuid
 
 from sqlalchemy import (
     UUID,
     Boolean,
-    Column,
     DateTime,
     Enum,
     ForeignKey,
-    Index,
     Integer,
-    Table,
     Text,
 )
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
