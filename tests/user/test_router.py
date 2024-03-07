@@ -45,11 +45,18 @@ async def test_update_user(client):
     login_response = await client.post(
         "/auth/login", json={"email": "jJl8j@example.com", "password": "password"}
     )
-    print(login_response.json())
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.patch(
-        "/user/me", json={"name": "new_name"}, headers=headers
+        "/user/me",
+        json={
+            "name": "new_name",
+            "surname": "surname",
+            "username": "username",
+            "email": "usama@gmail.com",
+            "phone_number": "375252562357",
+        },
+        headers=headers,
     )
     assert response.status_code == 204
     assert response.json()["name"] == "new_name"
