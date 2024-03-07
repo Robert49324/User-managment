@@ -16,6 +16,7 @@ async def create_group(group: GroupCreate, db: AsyncSession = Depends(get_db)):
     group = Group(**group.dict())
     await postgres_group.create(group, db)
     group =  postgres_group.read(group.name, db)
+    group = group.scalar()
     return {"message": "Group created", "id": group.id}
 
 
