@@ -1,15 +1,22 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.service import (authenticate_user, authorize, block_token,
-                          get_current_user, handle_login, is_blocked,
-                          send_email, verify_password)
-from database import get_db, postgres, redis_
+from auth.service import (
+    authenticate_user,
+    authorize,
+    block_token,
+    get_current_user,
+    handle_login,
+    is_blocked,
+    send_email,
+    verify_password,
+)
+from database import get_db, postgres_user
 from logger import logger
 from models import User
+from src.rabbitmq import get_rabbitmq
 
 from .dependencies import bcrypt_context
 from .schemas import LoginRequest, ResetPasswordRequest, SignUpRequest
@@ -19,7 +26,7 @@ auth = APIRouter(prefix="/auth", tags=["Auth module"])
 
 @auth.post("/signup", status_code=201)
 async def signup(user: SignUpRequest, db: Annotated[AsyncSession, Depends(get_db)]):
-    if await postgres.read(user.email, db) is None:
+    if await postgres_user.read(user.email, db) is None:
         logger.info(f"User {user.email} has been registrated")
         user = User(
             name=user.name,
@@ -28,7 +35,7 @@ async def signup(user: SignUpRequest, db: Annotated[AsyncSession, Depends(get_db
             password=bcrypt_context.hash(user.password),
             email=user.email,
         )
-        await postgres.create(user, db)
+        await postgres_user.create(user, db)
         return {"detail": "User successfully registered."}
     else:
         raise HTTPException(status_code=409, detail="User already exists.")
@@ -56,11 +63,16 @@ async def refresh_token(
     return await handle_login(user)
 
 
-@auth.post("/reset_password")
+@auth.post("/reset_password", status_code=200)
 async def reset_password(
-    db: Annotated[AsyncSession, Depends(get_db)], request: ResetPasswordRequest, user: User = Depends(get_current_user)
+    db: Annotated[AsyncSession, Depends(get_db)],
+    request: ResetPasswordRequest,
+    user: User = Depends(get_current_user),
+    rabbit=Depends(get_rabbitmq),
 ):
     if await verify_password(user, request.password):
-        await postgres.update({"password": bcrypt_context.hash(request.new_password)}, db, user.id)
-        await send_email(request.email)
-    
+        await postgres_user.update(
+            {"password": bcrypt_context.hash(request.new_password)}, db, user.id
+        )
+        await send_email(request.email, rabbit)
+    return {"detail": "Password successfully reset."}

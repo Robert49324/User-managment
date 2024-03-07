@@ -1,6 +1,7 @@
-name: CI/CD
-run-name: CI/CD
+name: lint
+
 on: [push]
+
 jobs:
   init:
     runs-on: ubuntu-latest

@@ -7,7 +7,7 @@ from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from database import get_db, postgres
+from database import get_db, postgres_user
 from logger import logger
 
 from .dependencies import oauth2_bearer
@@ -23,7 +23,7 @@ async def get_current_user(
         print(id)
         if id is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
-        user = await postgres.read_by_id(id, db)
+        user = await postgres_user.read_by_id(id, db)
         if user is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
         return user

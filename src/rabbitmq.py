@@ -1,3 +1,5 @@
+import os
+
 from aio_pika import Message, connect
 
 from config import settings
@@ -6,7 +8,7 @@ from config import settings
 class RabbitMQ:
     def __init__(self):
         self.address = (
-            f"amqp://{settings.rabbitmq_user}:{settings.rabbitmq_password}@rabbitmq/"
+            f"amqp://{settings.rabbitmq_user}:{settings.rabbitmq_password}@@rabbitmq/"
         )
 
     async def __aenter__(self):
@@ -23,4 +25,25 @@ class RabbitMQ:
         )
 
 
-rabbit = RabbitMQ()
+class RabbitMQMock:
+    def __init__(self):
+        pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, exc_type, exc, tb):
+        pass
+
+    async def publish(self, message: str, routing_key: str):
+        pass
+
+
+def get_rabbitmq():
+    testing = os.getenv("TESTING")
+    if testing:
+        return RabbitMQMock()
+    return RabbitMQ()
+
+
+rabbit = get_rabbitmq()

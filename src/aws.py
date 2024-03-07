@@ -38,4 +38,5 @@ class S3Client:
                 return False
 
 
-s3 = S3Client()
+def get_s3_client():
+    return S3Client()

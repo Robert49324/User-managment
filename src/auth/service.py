@@ -8,10 +8,10 @@ from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from database import get_db, postgres, redis_
+from database import get_db, postgres_user, redis_
 from models import User
-from rabbitmq import rabbit
 
+# from rabbitmq import rabbit
 
 from .dependencies import bcrypt_context, oauth2_scheme
 
@@ -64,7 +64,7 @@ async def get_current_user(
         id: str = payload.get("id")
         if id is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
-        user = await postgres.read_by_id(id, db)
+        user = await postgres_user.read_by_id(id, db)
         if user is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
         return user
@@ -74,14 +74,15 @@ async def get_current_user(
 
 
 async def authenticate_user(email: str, password: str, db: AsyncSession):
-    user: User = await postgres.read(email, db)
+    user: User = await postgres_user.read(email, db)
     if user is None:
         raise HTTPException(status_code=401, detail="Could not validate the user.")
     if not bcrypt_context.verify(password, user.password):
         raise HTTPException(status_code=401, detail="Could not validate the user.")
     return user
 
-async def verify_password(user : User, password : str):
+
+async def verify_password(user: User, password: str):
     if not bcrypt_context.verify(password, user.password):
         raise HTTPException(status_code=401, detail="Could not validate the user.")
     return True
@@ -102,6 +103,6 @@ def authorize(token: str = Depends(oauth2_scheme)):
     return token
 
 
-async def send_email(email: str):
+async def send_email(email: str, rabbit):
     async with rabbit:
         await rabbit.publish(email, "change_email")
