@@ -20,6 +20,7 @@ async def test_update_user(client):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
+    print(login_response.json())
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.patch(
