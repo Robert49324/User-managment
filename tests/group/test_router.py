@@ -36,7 +36,7 @@ async def test_add_user_to_group(client):
         "email": "email@email.com",
         "password": "password"
     })
-    db = Depends(get_db)
+    db = await get_db()
     user = await db.execute(select(User).where(User.email == "email@email.com"))
     user_id = user.scalar().id
     response = await client.post("/group/create", json={"name": "one_more"})
