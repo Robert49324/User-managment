@@ -13,11 +13,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
-
-from config import settings
+from src.config import settings
 
 engine = create_async_engine(
-    "postgresql+asyncpg://admin:admin@localhost:5432/user_management"
+    settings.postgres_url,
 )
 Base = declarative_base()
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

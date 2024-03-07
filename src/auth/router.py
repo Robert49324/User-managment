@@ -13,7 +13,7 @@ from auth.service import (
     send_email,
     verify_password,
 )
-from database import get_db, postgres
+from database import get_db, postgres_user
 from logger import logger
 from models import User
 from src.rabbitmq import get_rabbitmq
@@ -26,7 +26,7 @@ auth = APIRouter(prefix="/auth", tags=["Auth module"])
 
 @auth.post("/signup", status_code=201)
 async def signup(user: SignUpRequest, db: Annotated[AsyncSession, Depends(get_db)]):
-    if await postgres.read(user.email, db) is None:
+    if await postgres_user.read(user.email, db) is None:
         logger.info(f"User {user.email} has been registrated")
         user = User(
             name=user.name,
@@ -35,7 +35,7 @@ async def signup(user: SignUpRequest, db: Annotated[AsyncSession, Depends(get_db
             password=bcrypt_context.hash(user.password),
             email=user.email,
         )
-        await postgres.create(user, db)
+        await postgres_user.create(user, db)
         return {"detail": "User successfully registered."}
     else:
         raise HTTPException(status_code=409, detail="User already exists.")
@@ -71,7 +71,7 @@ async def reset_password(
     rabbit=Depends(get_rabbitmq),
 ):
     if await verify_password(user, request.password):
-        await postgres.update(
+        await postgres_user.update(
             {"password": bcrypt_context.hash(request.new_password)}, db, user.id
         )
         await send_email(request.email, rabbit)

@@ -6,6 +6,7 @@ from auth.router import auth
 from config import settings
 from logger import logger
 from user.router import user, users
+from group.router import group
 
 app = FastAPI()
 add_pagination(app)
@@ -13,7 +14,7 @@ add_pagination(app)
 app.include_router(auth)
 app.include_router(user)
 app.include_router(users)
-
+app.include_router(group)
 
 @app.get("/healthcheck", include_in_schema=False, status_code=200)
 async def healthcheck() -> dict[str, str]:

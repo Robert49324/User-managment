@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import redis.asyncio as redis
-from sqlalchemy import asc, delete, desc, insert, select, update
+from sqlalchemy import asc, delete, desc, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
 
@@ -81,6 +81,31 @@ class PostgresUser(AbstractDatabase):
         return users
 
 
+class PostgresGroup(AbstractDatabase):
+    async def create(self, group, db : AsyncSession):
+        db.add(group)
+        await db.commit()
+        
+    async def read(self, group: str, db: AsyncSession):
+        group = await db.execute(select(Group).where(Group.name == group))
+        group = group.scalar()
+        return group
+    
+    async def read_by_id(self, id: int, db: AsyncSession):
+        group = await db.execute(select(Group).where(Group.id == id))
+        group = group.scalar()
+        return group
+    
+    
+    async def update(self, group : str, db : AsyncSession, id : int):
+        await db.execute(update(Group).where(Group.id == id).values(group = group))
+        await db.execute()
+        
+    async def delete(self, id: int, db: AsyncSession):
+        await db.execute(delete(Group).where(Group.id == id))
+        await db.commit()
+    
+    
 class RedisClient(AbstractDatabase):
     def __init__(self):
         self.redis = redis.from_url(settings.redis_url)
@@ -100,7 +125,8 @@ class RedisClient(AbstractDatabase):
         await self.redis.delete(key)
 
 
-postgres = PostgresUser()
+postgres_user = PostgresUser()
+postgres_group = PostgresGroup()
 redis_ = RedisClient()
 
 
