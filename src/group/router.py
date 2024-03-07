@@ -15,7 +15,7 @@ async def create_group(group: GroupCreate, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Group already exists")
     group = Group(**group.dict())
     group = await postgres_group.create(group, db)
-    return {"message": "Group created"}
+    return {"message": "Group created", "id": group.id}
 
 
 @group.delete("/{group_id}")
@@ -23,7 +23,7 @@ async def remove_group(group_id: int, db: AsyncSession = Depends(get_db)):
     if not await postgres_group.read_by_id(group_id, db):
         raise HTTPException(status_code=404, detail="Group not found")
     group = await postgres_group.delete(group_id, db)
-    return {"message": "Group deleted", "id": group.id}
+    return {"message": "Group deleted"}
 
 @group.post("/{group_id}/users/{user_id}")
 async def add_user_to_group(
