@@ -8,6 +8,7 @@ from sqlalchemy import Null
 
 group = APIRouter(prefix="/group", tags=["Group module"])
 
+
 @group.post("/")
 async def create_group(group: GroupCreate, db: AsyncSession = Depends(get_db)):
     if await postgres_group.read(group.name, db):
@@ -32,8 +33,9 @@ async def add_user_to_group(
     group = await postgres_group.read(group_id, db)
     user = await postgres_user.read_by_id(user_id, db)
     if group and user:
-        await postgres_user.update({"group" : group.id},db, user_id)
+        await postgres_user.update({"group": group.id}, db, user_id)
         return {"message": "User added to group"}
+
 
 @group.delete("/{group_id}/users/{user_id}")
 async def delete_user_from_group(
@@ -43,4 +45,4 @@ async def delete_user_from_group(
     user = await postgres_user.read_by_id(user_id, db)
     if not group and not user:
         raise HTTPException(status_code=404, detail="Group or user not found")
-    await postgres_user.update({"group" : Null() }, db, user_id)
+    await postgres_user.update({"group": Null()}, db, user_id)

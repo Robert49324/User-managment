@@ -82,30 +82,29 @@ class PostgresUser(AbstractDatabase):
 
 
 class PostgresGroup(AbstractDatabase):
-    async def create(self, group, db : AsyncSession):
+    async def create(self, group, db: AsyncSession):
         db.add(group)
         await db.commit()
-        
+
     async def read(self, group: str, db: AsyncSession):
         group = await db.execute(select(Group).where(Group.name == group))
         group = group.scalar()
         return group
-    
+
     async def read_by_id(self, id: int, db: AsyncSession):
         group = await db.execute(select(Group).where(Group.id == id))
         group = group.scalar()
         return group
-    
-    
-    async def update(self, group : str, db : AsyncSession, id : int):
-        await db.execute(update(Group).where(Group.id == id).values(group = group))
+
+    async def update(self, group: str, db: AsyncSession, id: int):
+        await db.execute(update(Group).where(Group.id == id).values(group=group))
         await db.execute()
-        
+
     async def delete(self, id: int, db: AsyncSession):
         await db.execute(delete(Group).where(Group.id == id))
         await db.commit()
-    
-    
+
+
 class RedisClient(AbstractDatabase):
     def __init__(self):
         self.redis = redis.from_url(settings.redis_url)

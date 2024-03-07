@@ -16,6 +16,7 @@ app.include_router(user)
 app.include_router(users)
 app.include_router(group)
 
+
 @app.get("/healthcheck", include_in_schema=False, status_code=200)
 async def healthcheck() -> dict[str, str]:
     return {"status": "ok"}

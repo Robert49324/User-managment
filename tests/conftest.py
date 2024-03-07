@@ -13,12 +13,15 @@ from src.rabbitmq import get_rabbitmq
 
 def get_rabbitmq_override():
     return AsyncMock()
+
+
 def get_s3client_override():
     return AsyncMock()
 
 
 app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
 app.dependency_overrides[get_s3_client] = get_s3client_override
+
 
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:

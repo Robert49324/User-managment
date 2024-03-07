@@ -99,7 +99,7 @@ async def add_image(
     db: Annotated[AsyncSession, Depends(get_db)],
     image: UploadFile = File(),
     user: User = Depends(get_current_user),
-    s3 = Depends(get_s3_client)
+    s3=Depends(get_s3_client),
 ):
     if await s3.upload_fileobj(image, image.filename):
         await postgres_user.update({"image": image.filename}, db, user.id)
