@@ -9,7 +9,7 @@ from sqlalchemy import Null
 group = APIRouter(prefix="/group", tags=["Group module"])
 
 
-@group.post("/create")
+@group.post("/create", status_code=201)
 async def create_group(group: GroupCreate, db: AsyncSession = Depends(get_db)):
     if await postgres_group.read(group.name, db):
         raise HTTPException(status_code=400, detail="Group already exists")
