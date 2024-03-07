@@ -3,9 +3,9 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_get_users(client):
-    await response.post("/auth/signup", json={"name": "John", "surname": "Doe", "username": "johndoe", "password": "password", "email": "hT0Qf@example.com"})
-    await response.post("/auth/signup", json={"name": "Jane", "surname": "Doe", "username": "janedoe", "password": "password", "email": "vzRzO@example.com"})
-    await response.post("/auth/signup", json={"name": "Robert", "surname": "Doe", "username": "robertdoe", "password": "password", "email": "jJl8j@example.com"})
+    user1 = await response.post("/auth/signup", json={"name": "John", "surname": "Doe", "username": "johndoe", "password": "password", "email": "hT0Qf@example.com"})
+    user2 = await response.post("/auth/signup", json={"name": "Jane", "surname": "Doe", "username": "janedoe", "password": "password", "email": "vzRzO@example.com"})
+    user3 = await response.post("/auth/signup", json={"name": "Robert", "surname": "Doe", "username": "robertdoe", "password": "password", "email": "jJl8j@example.com"})
     
     response = await client.get(
         "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc"
