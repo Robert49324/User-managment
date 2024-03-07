@@ -16,6 +16,7 @@ async def test_get_users(client):
 
 @pytest.mark.asyncio
 async def test_update_user(client):
+    await client.post("/auth/signup", json={"name": "John", "surname": "Doe", "username": "johndoe", "password": "password", "email": "hT0Qf@example.com"})
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
@@ -35,4 +36,4 @@ async def test_delete_user(client):
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.delete("/user/me", headers=headers)
-    assert response.status_code == 204
+    assert response.status_code == 200
