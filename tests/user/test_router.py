@@ -58,7 +58,7 @@ async def test_update_user(client):
         },
         headers=headers,
     )
-    assert response.status_code == 204
+    assert response.status_code == 200
     assert response.json()["name"] == "new_name"
 
 
