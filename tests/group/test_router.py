@@ -7,7 +7,7 @@ from src.models import User
 
 @pytest.mark.asyncio
 async def test_create_group(client):
-    response = await client.post("/group/", json={"name": "group"})
+    response = await client.post("/group/create", json={"name": "group"})
     assert response.status_code == 201
     data = response.json()
     assert data["message"] == "Group created"
