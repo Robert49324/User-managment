@@ -24,7 +24,7 @@ async def test_update_user(client):
     response = await client.patch(
         "/user/me", json={"name": "new_name"}, headers=headers
     )
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert response.json()["name"] == "new_name"
 
 @pytest.mark.asyncio
