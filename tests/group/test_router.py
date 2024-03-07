@@ -1,0 +1,45 @@
+from sqlalchemy import asc, delete, desc, select, update
+import pytest
+
+from src.database import get_db
+from src.models import User
+
+
+@pytest.mark.asyncio
+async def test_create_group(test_client):
+    response = await test_client.post("/group/", json={"name": "group"})
+    assert response.status_code == 201
+    data = response.json()
+    assert data["message"] == "Group created"
+
+
+
+@pytest.mark.asyncio
+async def test_delete_group(test_client):
+    response = await test_client.post("/group/", json={"name": "new_group"})
+    group_id = response.json()["id"]
+    response = await test_client.delete(f"/group/{group_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "Group deleted"
+
+
+
+@pytest.mark.asyncio
+async def test_add_user_to_group(test_client):
+    await test_client.post("/auth/signup", json={
+        "name": "User",
+        "surname": "Name",
+        "username": "username",
+        "email": "email@email.com",
+        "password": "password"
+    })
+    db = get_db()
+    user = await db.execute(select(User).where(User.email == "email@email.com"))
+    user_id = user.scalar().id
+    response = await test_client.post("/group/", json={"name": "one_more"})
+    group_id = response.json()["id"]
+    response = await test_client.post(f"/group/{group_id}/users/{user_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "User added to group"
