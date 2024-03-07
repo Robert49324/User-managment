@@ -15,8 +15,7 @@ async def create_group(group: GroupCreate, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Group already exists")
     group = Group(**group.dict())
     await postgres_group.create(group, db)
-    group =  postgres_group.read(group.name, db)
-    group = group.scalar()
+    group = await postgres_group.read(group.name, db)
     return {"message": "Group created", "id": group.id}
 
 
