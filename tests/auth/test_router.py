@@ -61,8 +61,9 @@ async def test_refresh_token(client):
     access_token = login_response.json()["access_token"]
     refresh_token = login_response.json()["refresh_token"]
     print(access_token)
+    headers = {"Authorization": f"Bearer {access_token}"}
     time.sleep(1)
-    response = await client.post("/auth/refresh_token", json={"refresh_token": refresh_token})
+    response = await client.post("/auth/refresh_token", headers=headers)
     print(response.json())
     assert response.status_code == 200
     assert response.json()["access_token"] != access_token
