@@ -63,6 +63,7 @@ async def test_refresh_token(client):
     headers = {"Authorization": f"Bearer {access_token}"}
     time.sleep(1)
     response = await client.post("/auth/refresh_token", headers=headers)
+    print(response.json())
     assert response.status_code == 200
     assert response.json()["access_token"] != access_token
     assert response.json()["refresh_token"] != refresh_token
@@ -77,7 +78,7 @@ async def test_refresh_token_wrong_token(client):
 
 
 @pytest.mark.asyncio
-async def test_reset_password(client, mocker):
+async def test_reset_password(client):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )

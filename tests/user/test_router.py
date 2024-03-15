@@ -33,9 +33,13 @@ async def test_get_users(client):
             "email": "jJl8j@example.com",
         },
     )
-
+    login_response = await client.post(
+        "/auth/login", json={"email": "jJl8j@example.com", "password": "password"}
+    )
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.get(
-        "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc"
+        "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc", headers=headers
     )
     assert response.status_code == 200
 
