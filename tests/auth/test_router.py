@@ -60,6 +60,7 @@ async def test_refresh_token(client):
     )
     access_token = login_response.json()["access_token"]
     refresh_token = login_response.json()["refresh_token"]
+    print(access_token)
     time.sleep(1)
     response = await client.post("/auth/refresh_token", json={"refresh_token": refresh_token})
     print(response.json())
@@ -70,8 +71,8 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_refresh_token_wrong_token(client):
-    response = await client.post("/auth/refresh_token", json={"refresh_token": f"Bearer wrong_token"})
-    assert response.status_code == 401
+    response = await client.post("/auth/refresh_token", headers = {"Authorization": f"Bearer wrong_token"})
+    assert response.status_code == 422
     assert response.json() == {"detail": "Could not validate the user."}
 
 
