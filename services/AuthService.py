@@ -120,7 +120,6 @@ class AuthService:
         user = await get_current_user(self, token=refresh_token)
         logger.info(f"Refreshing token: {refresh_token}")
         return await self.handle_login(user)
-    
 
     async def reset_password(
         self,
