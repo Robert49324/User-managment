@@ -14,7 +14,6 @@ async def test_create_group(client):
     assert data["message"] == "Group created"
 
 
-
 @pytest.mark.asyncio
 async def test_delete_group(client):
     response = await client.post("/group/create", json={"name": "new_group"})
@@ -24,7 +23,3 @@ async def test_delete_group(client):
     assert response.status_code == 200
     data = response.json()
     assert data["message"] == "Group deleted"
-
-
-
-
