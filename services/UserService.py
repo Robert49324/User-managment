@@ -24,12 +24,10 @@ class UserService:
 
     async def get_users(
         self,
-        token: str,
         filter_by_name: str = None,
         sort_by: str = None,
         order_by: str = None,
     ) -> Page[ReturnPagination]:
-        user: User = await get_current_user(self, token)
         users = await self.userRepository.get_all(filter_by_name, sort_by, order_by)
         return paginate(users)
 

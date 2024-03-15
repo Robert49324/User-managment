@@ -14,10 +14,9 @@ async def get_users(
     filter_by_name: str = None,
     sort_by: str = None,
     order_by: str = None,
-    token: str = Depends(authorize),
     userService: UserService = Depends(),
 ) -> Page[ReturnPagination]:
-    return await userService.get_users(token, filter_by_name, sort_by, order_by)
+    return await userService.get_users(filter_by_name, sort_by, order_by)
 
 
 @user.patch("/me", response_model=ReturnUser)
