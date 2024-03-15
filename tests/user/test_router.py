@@ -38,9 +38,10 @@ async def test_get_users(client):
     )
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
-    print(login_response.json())
+    print("tests_get_users", login_response.json())
     response = await client.get(
-        "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc", headers=headers
+        "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc",
+        headers=headers,
     )
     assert response.status_code == 200
 

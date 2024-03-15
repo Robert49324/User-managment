@@ -1,6 +1,7 @@
+import pytest
 from fastapi import Depends
 from sqlalchemy import select
-import pytest
+
 
 @pytest.mark.asyncio
 async def test_create_group(client):

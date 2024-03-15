@@ -1,13 +1,14 @@
-from aio_pika import Message, connect
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-from jose import jwt, JWTError
-import redis
-from configs.environment import get_settings
 import asyncio
 
 import aioboto3
+import redis
+from aio_pika import Message, connect
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+
+from configs.environment import get_settings
 
 settings = get_settings()
 
@@ -33,8 +34,10 @@ async def get_current_user(
     except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate the user.")
 
+
 def authorize(token: str = Depends(oauth2_bearer)):
     return token
+
 
 class S3Client:
     def __init__(self):
@@ -67,12 +70,11 @@ class S3Client:
             return False
 
 
-
-
 def get_s3_client():
     return S3Client()
 
-class RedisClient():
+
+class RedisClient:
     def __init__(self):
         self.redis = redis.from_url(settings.redis_url)
 
@@ -93,6 +95,7 @@ class RedisClient():
 
 async def get_redis_client():
     return RedisClient()
+
 
 class RabbitMQ:
     def __init__(self):

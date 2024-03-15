@@ -1,19 +1,20 @@
 from fastapi import Depends
-from repositories.AbstractRepository import AbstractDatabase
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import asc, delete, desc, select, update
-from models.UserModel import User
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func
+
 from configs.database import get_db
 from models.UserModel import User
+from repositories.AbstractRepository import AbstractDatabase
+
 
 class UserRepository(AbstractDatabase):
-    db : AsyncSession
+    db: AsyncSession
 
     def __init__(self, db: AsyncSession = Depends(get_db)):
         self.db = db
 
-    async def create(self, user : User):
+    async def create(self, user: User):
         self.db.add(user)
         await self.db.commit()
 
@@ -60,4 +61,3 @@ class UserRepository(AbstractDatabase):
         users = await self.db.execute(query)
         users = users.scalars().all()
         return users
-

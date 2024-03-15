@@ -1,9 +1,10 @@
 from fastapi import Depends
-from configs.database import get_db
-from repositories.AbstractRepository import AbstractDatabase
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import delete, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from configs.database import get_db
 from models.GroupModel import Group
+from repositories.AbstractRepository import AbstractDatabase
 
 
 class GroupRepository(AbstractDatabase):
@@ -33,4 +34,3 @@ class GroupRepository(AbstractDatabase):
     async def delete(self, id: int):
         await self.db.execute(delete(Group).where(Group.id == id))
         await self.db.commit()
-

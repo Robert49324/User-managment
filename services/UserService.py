@@ -1,10 +1,11 @@
-from fastapi_pagination import Page, paginate
 from fastapi import Depends, File, HTTPException, UploadFile
-from schemas.UserSchemas import ReturnPagination, ReturnUser, UpdateRequest
-from repositories.UserRepository import UserRepository
-from configs.environment import get_settings
+from fastapi_pagination import Page, paginate
+
 from configs.dependencies import S3Client, get_current_user, get_s3_client
+from configs.environment import get_settings
 from models.UserModel import User
+from repositories.UserRepository import UserRepository
+from schemas.UserSchemas import ReturnPagination, ReturnUser, UpdateRequest
 
 settings = get_settings()
 
@@ -22,9 +23,13 @@ class UserService:
         self.s3 = s3
 
     async def get_users(
-        self, token : str, filter_by_name: str = None, sort_by: str = None, order_by: str = None, 
+        self,
+        token: str,
+        filter_by_name: str = None,
+        sort_by: str = None,
+        order_by: str = None,
     ) -> Page[ReturnPagination]:
-        user : User = await get_current_user(self, token)
+        user: User = await get_current_user(self, token)
         users = await self.userRepository.get_all(filter_by_name, sort_by, order_by)
         return paginate(users)
 
@@ -44,7 +49,7 @@ class UserService:
         await self.userRepository.delete(user.id)
 
     async def user_info(self, user_id: str, token: str) -> ReturnUser:
-        user_admin : User = await get_current_user(self, token)
+        user_admin: User = await get_current_user(self, token)
         if user_admin.role == "USER":
             raise HTTPException(403, detail="No access")
         user = await self.userRepository.read_by_id(user_id)
@@ -62,7 +67,7 @@ class UserService:
     async def update_user(
         self, update_request: UpdateRequest, user_id: str, token: str
     ):
-        user_admin : User = await get_current_user(self, token)
+        user_admin: User = await get_current_user(self, token)
         if user_admin.role == "USER":
             raise HTTPException(403, detail="No access")
         user = await self.userRepository.read_by_id(user_id)
@@ -82,7 +87,7 @@ class UserService:
         raise HTTPException(403, detail="No access")
 
     async def add_image(self, token: str, image: UploadFile = File()):
-        user : User = await get_current_user(self, token)
+        user: User = await get_current_user(self, token)
         async with self.s3 as s3:
             if await s3.upload_fileobj(image.file, image.filename):
                 await self.userRepository.update({"image": image.filename}, user.id)

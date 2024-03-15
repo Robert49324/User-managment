@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import Null
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from models.GroupModel import Group
 from repositories.GroupRepository import GroupRepository
 from repositories.UserRepository import UserRepository
 from schemas.GroupSchemas import GroupCreate
-from sqlalchemy import Null
-from models.GroupModel import Group
+
 
 class GroupService:
     groupRepository: GroupRepository

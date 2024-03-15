@@ -1,13 +1,8 @@
+from sqlalchemy import DateTime, Integer, Text
 from sqlalchemy.orm import mapped_column
-from sqlalchemy import (
-    DateTime,
-    Integer,
-    Text,
-    Integer,
-)
+from sqlalchemy.sql import func
 
 from models.BaseModel import Base
-from sqlalchemy.sql import func
 
 
 class Group(Base):

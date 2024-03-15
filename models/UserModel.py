@@ -1,15 +1,10 @@
 import uuid
-from models.BaseModel import Base
+
+from sqlalchemy import UUID, Boolean, DateTime, Enum, ForeignKey, Text
 from sqlalchemy.orm import mapped_column
-from sqlalchemy import (
-    UUID,
-    Boolean,
-    DateTime,
-    Enum,
-    ForeignKey,
-    Text,
-)
 from sqlalchemy.sql import func
+
+from models.BaseModel import Base
 
 
 class User(Base):
