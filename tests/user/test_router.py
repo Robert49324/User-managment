@@ -33,12 +33,21 @@ async def test_get_users(client):
             "email": "jJl8j@example.com",
         },
     )
+    await client.post(
+        "/auth/signup",
+        json={
+            "name": "test_user",
+            "surname": "Doe",
+            "username": "robertdoe",
+            "password": "password",
+            "email": "test@example.com",
+        },
+    )
     login_response = await client.post(
-        "/auth/login", json={"email": "jJl8j@example.com", "password": "password"}
+        "/auth/login", json={"email": "test@example.com", "password": "password"}
     )
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
-    print("tests_get_users", login_response.json())
     response = await client.get(
         "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc",
         headers=headers,
