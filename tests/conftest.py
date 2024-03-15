@@ -5,10 +5,8 @@ from unittest.mock import AsyncMock
 import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
-from src.aws import get_s3_client
-
+from configs.dependencies import get_rabbitmq, get_s3_client
 from src.main import app
-from src.rabbitmq import get_rabbitmq
 
 
 def get_rabbitmq_override():
