@@ -2,10 +2,6 @@ from fastapi import Depends
 from sqlalchemy import select
 import pytest
 
-from src.database import get_db
-from src.models import User
-
-
 @pytest.mark.asyncio
 async def test_create_group(client):
     response = await client.post("/group/create", json={"name": "group"})
