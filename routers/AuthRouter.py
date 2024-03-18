@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from configs.dependencies import authorize, get_current_user
 from models.UserModel import User
 from schemas.AuthSchemas import (LoginRequest, ResetPasswordRequest,
-                                 SignUpRequest)
+                                 SignUpRequest, Token)
 from services.AuthService import AuthService
 
 auth = APIRouter(prefix="/auth", tags=["Auth module"])
@@ -22,7 +22,7 @@ async def login(form_data: LoginRequest, authService: AuthService = Depends()):
 
 
 @auth.post("/refresh_token")
-async def refresh_token(refresh_token: str, authService: AuthService = Depends()):
+async def refresh_token(refresh_token: Token, authService: AuthService = Depends()):
     return await authService.refresh_token(refresh_token)
 
 
