@@ -52,6 +52,7 @@ async def test_login_wrong_password(client):
     assert response.status_code == 401
     assert response.json() == {"detail": "Could not validate the user."}
 
+
 @pytest.mark.asyncio
 async def test_reset_password(client):
     login_response = await client.post(

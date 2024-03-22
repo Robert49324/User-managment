@@ -8,6 +8,7 @@ from models.UserModel import User
 from repositories.AbstractRepository import AbstractDatabase
 from src.logger import logger
 
+
 class UserRepository(AbstractDatabase):
     db: AsyncSession
 
@@ -39,7 +40,9 @@ class UserRepository(AbstractDatabase):
 
     async def update(self, request: dict, id: str):
         try:
-            request = {key: value for key, value in request.items() if value is not None}
+            request = {
+                key: value for key, value in request.items() if value is not None
+            }
             await self.db.execute(update(User).where(User.id == id).values(**request))
             await self.db.commit()
             user = await self.db.execute(select(User).where(User.id == id))

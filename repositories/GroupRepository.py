@@ -39,7 +39,9 @@ class GroupRepository(AbstractDatabase):
 
     async def update(self, group: str, id: int):
         try:
-            await self.db.execute(update(Group).where(Group.id == id).values(group=group))
+            await self.db.execute(
+                update(Group).where(Group.id == id).values(group=group)
+            )
             await self.db.commit()
         except Exception as e:
             logger.error(f"Error updating group: {str(e)}")

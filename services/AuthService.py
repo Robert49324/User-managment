@@ -93,9 +93,9 @@ class AuthService:
     async def send_email(self, email: str):
         async with self.rabbit:
             message = {
-            'email': email,
-            'action': 'change_password',
-            'datetime': datetime.datetime.now().isoformat()
+                "email": email,
+                "action": "change_password",
+                "datetime": datetime.datetime.now().isoformat(),
             }
         async with self.rabbit:
             await self.rabbit.publish(json.dumps(message), "change_password")
