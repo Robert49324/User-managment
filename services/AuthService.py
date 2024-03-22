@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from fastapi import Depends, HTTPException
 from jose import jwt
@@ -91,7 +92,13 @@ class AuthService:
 
     async def send_email(self, email: str):
         async with self.rabbit:
-            await self.rabbit.publish(email, "change_email")
+            message = {
+            'email': email,
+            'action': 'change_password',
+            'datetime': datetime.datetime.now().isoformat()
+            }
+        async with self.rabbit:
+            await self.rabbit.publish(json.dumps(message), "change_password")
 
     async def signup(self, user: SignUpRequest):
         if await self.userRepository.read(user.email) is None:

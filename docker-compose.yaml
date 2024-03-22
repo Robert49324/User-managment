@@ -40,12 +40,14 @@ services:
     container_name: localstack
     image: localstack/localstack
     environment:
-      - SERVICES=s3
+      - SERVICES=s3, ses
     ports:
       - 4566:4566
     networks:
       - backend
-
+    volumes:
+      - './verify_email.sh:/etc/localstack/init/ready.d/init-ses.sh'    
+      
   server:
     build:
       context: .
@@ -62,4 +64,5 @@ services:
   
 networks:
   backend:
+    name: backend
     driver: bridge

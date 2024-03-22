@@ -71,9 +71,7 @@ class UserService:
         user = await self.userRepository.read_by_id(user_id)
 
         if user_admin.group == user.group:
-            print(user.__dict__)
             user: User = await self.userRepository.update(dict(update_request), user.id)
-            print(user.__dict__)
             return ReturnUser(
                 name=user.name,
                 surname=user.surname,

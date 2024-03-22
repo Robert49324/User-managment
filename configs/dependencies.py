@@ -23,7 +23,6 @@ async def get_current_user(
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=settings.algorithm)
         id: str = payload.get("id")
-        print(id)
         if id is None:
             raise HTTPException(status_code=401, detail="Could not validate the user.")
         user = await self.userRepository.read_by_id(id)
@@ -66,7 +65,6 @@ class S3Client:
             await self.s3.upload_fileobj(Fileobj=file, Bucket=self.bucket, Key=filename)
             return True
         except Exception as e:
-            print(e)  # or use your preferred logging method
             return False
 
 
@@ -79,7 +77,6 @@ class RedisClient:
         self.redis = redis.from_url(settings.redis_url)
 
     async def create(self, key, value):
-        print(f"Creating {key} : {value}")
         self.redis.set(key, value)
 
     async def read(self, key):

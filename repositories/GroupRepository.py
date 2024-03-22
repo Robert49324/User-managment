@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from configs.database import get_db
 from models.GroupModel import Group
 from repositories.AbstractRepository import AbstractDatabase
+from src.logger import logger
 
 
 class GroupRepository(AbstractDatabase):
@@ -14,23 +15,38 @@ class GroupRepository(AbstractDatabase):
         self.db = db
 
     async def create(self, group):
-        self.db.add(group)
-        await self.db.commit()
+        try:
+            self.db.add(group)
+            await self.db.commit()
+        except Exception as e:
+            logger.error(f"Error creating group: {str(e)}")
 
     async def read(self, group: str):
-        group = await self.db.execute(select(Group).where(Group.name == group))
-        group = group.scalar()
-        return group
+        try:
+            group = await self.db.execute(select(Group).where(Group.name == group))
+            group = group.scalar()
+            return group
+        except Exception as e:
+            logger.error(f"Error reading group: {str(e)}")
 
     async def read_by_id(self, id: int):
-        group = await self.db.execute(select(Group).where(Group.id == id))
-        group = group.scalar()
-        return group
+        try:
+            group = await self.db.execute(select(Group).where(Group.id == id))
+            group = group.scalar()
+            return group
+        except Exception as e:
+            logger.error(f"Error reading group by id: {str(e)}")
 
     async def update(self, group: str, id: int):
-        await self.db.execute(update(Group).where(Group.id == id).values(group=group))
-        await self.db.execute()
+        try:
+            await self.db.execute(update(Group).where(Group.id == id).values(group=group))
+            await self.db.commit()
+        except Exception as e:
+            logger.error(f"Error updating group: {str(e)}")
 
     async def delete(self, id: int):
-        await self.db.execute(delete(Group).where(Group.id == id))
-        await self.db.commit()
+        try:
+            await self.db.execute(delete(Group).where(Group.id == id))
+            await self.db.commit()
+        except Exception as e:
+            logger.error(f"Error deleting group: {str(e)}")

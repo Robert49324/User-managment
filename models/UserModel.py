@@ -4,10 +4,10 @@ from sqlalchemy import UUID, Boolean, DateTime, Enum, ForeignKey, Text
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
-from models.BaseModel import Base
+from models.BaseModel import BaseModel
 
 
-class User(Base):
+class User(BaseModel):
     __tablename__ = "users"
 
     id = mapped_column(UUID, primary_key=True, default=uuid.uuid4)
@@ -23,5 +23,4 @@ class User(Base):
     group = mapped_column(ForeignKey("group.id"))
     image = mapped_column(Text, unique=True)
     is_blocked = mapped_column(Boolean, default=False)
-    created_at = mapped_column(DateTime, default=func.now())
     modified_at = mapped_column(DateTime, default=func.now())
