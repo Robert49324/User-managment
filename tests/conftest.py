@@ -10,15 +10,6 @@ from repositories.AWSClient import S3Client
 from repositories.RabbitClient import RabbitMQ
 from src.main import app
 
-
-def get_rabbitmq_override():
-    return AsyncMock()
-
-
-def get_s3client_override():
-    return AsyncMock()
-
-
 app.dependency_overrides[RabbitMQ] = AsyncMock()
 app.dependency_overrides[S3Client] = AsyncMock()
 
