@@ -69,3 +69,14 @@ jobs:
       - name: Run tests
         run: |
           poetry run pytest --cov
+
+      - name: Check coverage
+        run: |
+          COVERAGE_THRESHOLD=80
+          ACTUAL_COVERAGE=$(poetry run pytest --cov-report xml | grep -oP 'line-rate="[^"]+"' | grep -oP '[^"]+')
+          if (( $(echo "$ACTUAL_COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
+            echo "Test coverage is below $COVERAGE_THRESHOLD%. Cancelling the push."
+            exit 1
+          else
+            echo "Test coverage is acceptable."
+          fi
