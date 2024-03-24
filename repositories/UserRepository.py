@@ -21,6 +21,7 @@ class UserRepository(AbstractDatabase):
             await self.db.commit()
         except Exception as e:
             logger.error(f"Error creating user: {str(e)}")
+            await self.db.rollback()
 
     async def read(self, email: str):
         try:
@@ -50,6 +51,7 @@ class UserRepository(AbstractDatabase):
             return user
         except Exception as e:
             logger.error(f"Error updating user: {str(e)}")
+            await self.db.rollback()
 
     async def delete(self, id: str):
         try:
@@ -57,6 +59,7 @@ class UserRepository(AbstractDatabase):
             await self.db.commit()
         except Exception as e:
             logger.error(f"Error deleting user: {str(e)}")
+            await self.db.rollback()
 
     async def get_all(
         self,

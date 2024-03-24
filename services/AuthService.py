@@ -4,13 +4,12 @@ import json
 from fastapi import Depends, HTTPException
 from jose import jwt
 
-from configs.dependencies import (RabbitMQ, RedisClient, authorize,
-                                  bcrypt_context, get_current_user,
-                                  get_rabbitmq, get_redis_client,
+from configs.dependencies import (authorize, bcrypt_context, get_current_user,
                                   oauth2_bearer)
 from configs.environment import get_settings
 from models.UserModel import User
-from repositories.GroupRepository import GroupRepository
+from repositories.RabbitClient import RabbitMQ
+from repositories.RedisClient import RedisClient
 from repositories.UserRepository import UserRepository
 from schemas.AuthSchemas import (LoginRequest, ResetPasswordRequest,
                                  SignUpRequest)
@@ -27,8 +26,8 @@ class AuthService:
     def __init__(
         self,
         userRepository: UserRepository = Depends(),
-        redis: RedisClient = Depends(get_redis_client),
-        rabbit: RabbitMQ = Depends(get_rabbitmq),
+        redis: RedisClient = Depends(),
+        rabbit: RabbitMQ = Depends(),
     ):
         self.userRepository = userRepository
         self.redis = redis

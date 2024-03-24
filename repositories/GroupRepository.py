@@ -20,6 +20,7 @@ class GroupRepository(AbstractDatabase):
             await self.db.commit()
         except Exception as e:
             logger.error(f"Error creating group: {str(e)}")
+            await self.db.rollback()
 
     async def read(self, group: str):
         try:
@@ -45,6 +46,7 @@ class GroupRepository(AbstractDatabase):
             await self.db.commit()
         except Exception as e:
             logger.error(f"Error updating group: {str(e)}")
+            await self.db.rollback()
 
     async def delete(self, id: int):
         try:
@@ -52,3 +54,4 @@ class GroupRepository(AbstractDatabase):
             await self.db.commit()
         except Exception as e:
             logger.error(f"Error deleting group: {str(e)}")
+            await self.db.rollback()

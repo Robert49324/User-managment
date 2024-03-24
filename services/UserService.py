@@ -1,9 +1,10 @@
 from fastapi import Depends, File, HTTPException, UploadFile
 from fastapi_pagination import Page, paginate
 
-from configs.dependencies import S3Client, get_current_user, get_s3_client
+from configs.dependencies import get_current_user
 from configs.environment import get_settings
 from models.UserModel import User
+from repositories.AWSClient import S3Client
 from repositories.UserRepository import UserRepository
 from schemas.UserSchemas import ReturnPagination, ReturnUser, UpdateRequest
 
@@ -17,7 +18,7 @@ class UserService:
     def __init__(
         self,
         userRepository: UserRepository = Depends(),
-        s3: S3Client = Depends(get_s3_client),
+        s3: S3Client = Depends(),
     ):
         self.userRepository = userRepository
         self.s3 = s3

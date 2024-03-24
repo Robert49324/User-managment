@@ -9,3 +9,4 @@ Base = declarative_base()
 class BaseModel(Base):
     __abstract__ = True
     created_at = mapped_column(DateTime, default=func.now())
+    modified_at = mapped_column(DateTime, default=func.now())

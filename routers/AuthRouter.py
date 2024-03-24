@@ -22,8 +22,8 @@ async def login(form_data: LoginRequest, authService: AuthService = Depends()):
 
 
 @auth.post("/refresh_token")
-async def refresh_token(refresh_token: Token, authService: AuthService = Depends()):
-    return await authService.refresh_token(refresh_token.token)
+async def refresh_token(token: Token, authService: AuthService = Depends()):
+    return await authService.refresh_token(token.token)
 
 
 @auth.post("/reset_password", status_code=200)

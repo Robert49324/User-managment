@@ -23,4 +23,3 @@ class User(BaseModel):
     group = mapped_column(ForeignKey("group.id"))
     image = mapped_column(Text, unique=True)
     is_blocked = mapped_column(Boolean, default=False)
-    modified_at = mapped_column(DateTime, default=func.now())
