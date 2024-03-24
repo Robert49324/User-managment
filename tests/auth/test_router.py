@@ -6,13 +6,13 @@ import pytest
 async def test_signup(client):
     response = await client.post(
         "/auth/signup",
-        json={
-            "name": "John",
-            "surname": "Doe",
-            "username": "johndoe",
-            "password": "password",
-            "email": "hT0Qf@example.com",
-        },
+        # json={
+        #     "name": "John",
+        #     "surname": "Doe",
+        #     "username": "johndoe",
+        #     "password": "password",
+        #     "email": "hT0Qf@example.com",
+        # },
     )
     print(response.json())
     assert response.status_code == 201

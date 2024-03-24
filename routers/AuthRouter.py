@@ -13,13 +13,11 @@ auth = APIRouter(prefix="/auth", tags=["Auth module"])
 
 @auth.post("/signup", status_code=201)
 async def signup(user: SignUpRequest, authService: AuthService = Depends()):
-    print(user.model_dump())
     return await authService.signup(user)
 
 
 @auth.post("/login")
 async def login(form_data: LoginRequest, authService: AuthService = Depends()):
-    print(form_data.model_dump())
     return await authService.login(form_data)
 
 
