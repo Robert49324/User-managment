@@ -6,7 +6,8 @@ import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
 
-from configs.dependencies import get_rabbitmq, get_s3_client
+from repositories.AWSClient import S3Client
+from repositories.RabbitClient import RabbitMQ
 from src.main import app
 
 
@@ -18,8 +19,8 @@ def get_s3client_override():
     return AsyncMock()
 
 
-app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
-app.dependency_overrides[get_s3_client] = get_s3client_override
+app.dependency_overrides[RabbitMQ] = AsyncMock()
+app.dependency_overrides[S3Client] = AsyncMock()
 
 
 @pytest.fixture(scope="session")
