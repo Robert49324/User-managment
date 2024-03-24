@@ -68,7 +68,7 @@ jobs:
 
       - name: Run tests
         run: |
-          poetry run pytest --cov
+          poetry run pytest -s
 
       - name: Check coverage
         run: |
