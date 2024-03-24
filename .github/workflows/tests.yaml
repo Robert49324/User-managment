@@ -34,13 +34,13 @@ jobs:
           POSTGRES_PASSWORD: admin
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      redis:
-        image: redis:7.2.4-alpine
-        ports:
-          - "6379:6379"
-        env:
-          ALLOW_EMPTY_PASSWORD : yes
-          REDIS_PORT : ${REDIS_PORT}
+      # redis:
+      #   image: redis:7.2.4-alpine
+      #   ports:
+      #     - "6379:6379"
+      #   env:
+      #     ALLOW_EMPTY_PASSWORD : yes
+      #     REDIS_PORT : ${REDIS_PORT}
 
 
     steps:

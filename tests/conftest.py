@@ -8,10 +8,12 @@ from async_asgi_testclient import TestClient
 
 from repositories.AWSClient import S3Client
 from repositories.RabbitClient import RabbitMQ
+from repositories.RedisClient import RedisClient
 from src.main import app
 
 app.dependency_overrides[RabbitMQ] = AsyncMock()
 app.dependency_overrides[S3Client] = AsyncMock()
+app.dependency_overrides[RedisClient] = AsyncMock()
 
 
 @pytest.fixture(scope="session")
