@@ -21,10 +21,27 @@ async def test_create_access_token(auth_service):
     assert isinstance(token, str)
 
 @pytest.mark.asyncio
+async def test_create_access_token_wrong_data(auth_service):
+    data = {}
+    with pytest.raises(HTTPException) as e:
+        await auth_service.create_access_token(data)
+    assert e.value.status_code == 422
+    assert e.value.detail == "Missing data"
+
+@pytest.mark.asyncio
 async def test_create_refresh_token(auth_service):
     data = {"id": "1"}
     token = await auth_service.create_refresh_token(data)
     assert isinstance(token, str)
+
+@pytest.mark.asyncio
+async def test_create_refresh_token_wrong_data(auth_service):
+    data = {}
+    with pytest.raises(HTTPException) as e:
+        await auth_service.create_refresh_token(data)
+    assert e.value.status_code == 422
+    assert e.value.detail == "Missing data"
+
 
 @pytest.mark.asyncio
 async def test_generate_tokens(auth_service):
@@ -59,3 +76,4 @@ async def test_is_blocked(auth_service):
 async def test_block_token(auth_service):
     await auth_service.block_token("token")
     auth_service.redis.create.assert_called_once_with("token", "blocked")
+
