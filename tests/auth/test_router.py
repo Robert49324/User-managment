@@ -68,7 +68,7 @@ async def test_refresh_token(client):
 async def test_refresh_token_wrong_data(client):
     response = await client.post(
         "/auth/refresh_token",
-        json={"token": "wrong_token"},
+        json={"token": "token"},
     )
     print(response.json())
     assert response.status_code == 403
