@@ -16,16 +16,14 @@ async def test_upload_fileobj_success(s3_client):
     file = MagicMock()
     filename = "test_file.txt"
     result = await s3_client.upload_fileobj(file, filename)
+    print("Result:", result)
     assert result is True
 @pytest.mark.asyncio
-async def test_upload_fileobj_success(s3_client):
-    # Mock session.client, s3.upload_fileobj, and s3.head_bucket methods
+async def test_upload_fileobj_failure(s3_client):
     s3_client.session.client = AsyncMock()
-    s3_client.session.client.return_value.__aenter__.return_value.upload_fileobj = AsyncMock(return_value=True)
-    s3_client.session.client.return_value.__aenter__.return_value.head_bucket = AsyncMock()
+    s3_client.session.client.return_value.__aenter__.return_value.upload_fileobj = AsyncMock(side_effect=Exception())
     
     file = MagicMock()
     filename = "test_file.txt"
     result = await s3_client.upload_fileobj(file, filename)
-    print("Result:", result)
-    assert result is True
+    assert result is False
