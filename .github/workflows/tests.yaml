@@ -60,5 +60,5 @@ jobs:
       - name: Run tests
         run: |
           poetry run pytest --cov
-          coverage report --fail-under=80
+          poetry run coverage report --fail-under=80
 
