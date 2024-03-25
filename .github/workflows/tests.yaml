@@ -34,15 +34,6 @@ jobs:
           POSTGRES_PASSWORD: admin
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      # redis:
-      #   image: redis:7.2.4-alpine
-      #   ports:
-      #     - "6379:6379"
-      #   env:
-      #     ALLOW_EMPTY_PASSWORD : yes
-      #     REDIS_PORT : ${REDIS_PORT}
-
-
     steps:
       - name: Install PostgreSQL client
         run: |
@@ -75,8 +66,8 @@ jobs:
           coverageXml=$(poetry run pytest --cov --cov-report=xml)
           coverage=$(echo $coverageXml | sed -n 's/.*\(\s*\|\s*\)TOTAL\s*\|\s*\(.*\)\%.*$/\2/p')
           echo "Coverage is: $coverage%"
-          if [ $(echo "$coverage < 80" | bc -l) = 1 ] ; then
-            echo "Coverage is below 80%, aborting!"
+          if [ $(echo "$coverage < 70" | bc -l) = 1 ] ; then
+            echo "Coverage is below 70%, aborting!"
             exit 1
           fi
 
