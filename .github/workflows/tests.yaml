@@ -59,15 +59,14 @@ jobs:
 
       - name: Run tests
         run: |
-          poetry run pytest --cov
+          poetry run pytest --cov=tests
 
       - name: Check coverage
         run: |
-          coverageXml=$(poetry run pytest --cov --cov-report=xml)
-          coverage=$(echo $coverageXml | sed -n 's/.*\(\s*\|\s*\)TOTAL\s*\|\s*\(.*\)\%.*$/\2/p')
-          echo "Coverage is: $coverage%"
-          if [ $(echo "$coverage < 70" | bc -l) = 1 ] ; then
-            echo "Coverage is below 70%, aborting!"
+          COVERAGE_THRESHOLD=80
+          ACTUAL_COVERAGE=$(coverage report | grep TOTAL | awk '{print $NF}')
+          if (( $(echo "$ACTUAL_COVERAGE < $COVERAGE_THRESHOLD" | bc -l) )); then
+            echo "Coverage is below $COVERAGE_THRESHOLD%. Cancelling pipeline."
             exit 1
           fi
 
