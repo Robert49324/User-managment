@@ -14,7 +14,6 @@ async def test_signup(client):
             "email": "hT0Qf@example.com",
         },
     )
-    print(response.json())
     assert response.status_code == 201
     assert response.json() == {"detail": "User successfully registered."}
 
@@ -31,7 +30,6 @@ async def test_signup_wrong_email_format(client):
             "email": "wrong_email",
         },
     )
-    print(response.json())
     assert response.status_code == 422
 
 
@@ -40,7 +38,7 @@ async def test_login(client):
     response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
-    print(response.json())
+
     assert response.status_code == 200
     assert response.json()["access_token"] is not None
 
@@ -50,9 +48,32 @@ async def test_login_wrong_password(client):
     response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "wrong_password"}
     )
-    print(response.json())
     assert response.status_code == 401
     assert response.json() == {"detail": "Could not validate the user."}
+
+
+@pytest.mark.asyncio
+async def test_refresh_token(client, user):
+    response = await client.post(
+        "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
+    )
+    token = response.json()["access_token"]
+    response = await client.post(
+        "/auth/refresh_token",
+        json={"token": token},
+    )
+    assert response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_refresh_token_wrong_data(client):
+    response = await client.post(
+        "/auth/refresh_token",
+        json={"token": "wrong_token"},
+    )
+    assert response.status_code == 403
+
+
+
 
 
 @pytest.mark.asyncio
@@ -90,6 +111,5 @@ async def test_reset_password_wrong_password(client):
         },
         headers=headers,
     )
-    print(response.json())
     assert response.status_code == 401
     assert response.json() == {"detail": "Could not validate the user."}

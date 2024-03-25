@@ -46,7 +46,6 @@ async def test_get_users(client):
     response = await client.get(
         "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc",
     )
-    print(response.json())
     assert response.status_code == 200
 
 
@@ -68,7 +67,6 @@ async def test_update_user(client):
         },
         headers=headers,
     )
-    print(response.json())
     assert response.status_code == 200
     assert response.json()["name"] == "new_name"
 
@@ -81,5 +79,4 @@ async def test_delete_user(client):
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.delete("/user/me", headers=headers)
-    print(response.json())
     assert response.status_code == 200
