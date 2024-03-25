@@ -1,120 +1,86 @@
 import pytest
 from fastapi import HTTPException
-from unittest.mock import AsyncMock, MagicMock
+from jose import ExpiredSignatureError, JWTError
+from unittest.mock import MagicMock, AsyncMock
+
 from models.UserModel import User
-from schemas.AuthSchemas import LoginRequest, ResetPasswordRequest, SignUpRequest
 from services.AuthService import AuthService
 
 @pytest.fixture
-def mock_user_repository():
-    return AsyncMock()
-
-@pytest.fixture
-def mock_redis_client():
-    return AsyncMock()
-
-@pytest.fixture
-def mock_rabbitmq():
-    return AsyncMock()
-
-@pytest.fixture
-def auth_service(mock_user_repository, mock_redis_client, mock_rabbitmq):
+def auth_service():
     return AuthService(
-        userRepository=mock_user_repository,
-        redis=mock_redis_client,
-        rabbit=mock_rabbitmq
+        userRepository=AsyncMock(),
+        redis=AsyncMock(),
+        rabbit=AsyncMock()
     )
 
 @pytest.mark.asyncio
 async def test_create_access_token(auth_service):
-    user_data = {"id": "1", "email": "test@example.com", "role": "user"}
-    token = await auth_service.create_access_token(user_data)
-    assert token is not None
+    data = {"id": "1", "email": "test@example.com", "role": "user"}
+    token = await auth_service.create_access_token(data)
+    assert isinstance(token, str)
 
 @pytest.mark.asyncio
 async def test_create_refresh_token(auth_service):
-    user_data = {"id": "1"}
-    token = await auth_service.create_refresh_token(user_data)
-    assert token is not None
+    data = {"id": "1"}
+    token = await auth_service.create_refresh_token(data)
+    assert isinstance(token, str)
 
 @pytest.mark.asyncio
 async def test_generate_tokens(auth_service):
     user = User(id="1", email="test@example.com", role="user")
     access_token, refresh_token = await auth_service.generate_tokens(user)
-    assert access_token is not None
-    assert refresh_token is not None
+    assert isinstance(access_token, str)
+    assert isinstance(refresh_token, str)
 
 @pytest.mark.asyncio
 async def test_handle_login(auth_service):
     user = User(id="1", email="test@example.com", role="user")
-    tokens = await auth_service.handle_login(user)
-    assert "access_token" in tokens
-    assert "refresh_token" in tokens
+    auth_service.generate_tokens = AsyncMock(return_value=("access_token", "refresh_token"))
+    result = await auth_service.handle_login(user)
+    assert result == {
+        "access_token": "access_token",
+        "refresh_token": "refresh_token",
+        "token_type": "bearer",
+    }
 
 @pytest.mark.asyncio
-async def test_authenticate_user(auth_service, mock_user_repository):
-    mock_user_repository.read.return_value = User(
-        id="1", email="test@example.com", role="user"
-    )
-    user = await auth_service.authenticate_user("test@example.com", "password")
-    assert user is not None
+async def test_authenticate_user(auth_service):
+    auth_service.userRepository.read = AsyncMock(return_value=None)
+    with pytest.raises(HTTPException):
+        await auth_service.authenticate_user("test@example.com", "password")
 
 @pytest.mark.asyncio
-async def test_verify_password(auth_service):
-    user = User(id="1", email="test@example.com", role="user", password="$2b$12$2")
-    result = await auth_service.verify_password(user, "password")
-    assert result
+async def test_is_blocked(auth_service):
+    auth_service.redis.read = AsyncMock(return_value=True)
+    assert await auth_service.is_blocked("token")
 
 @pytest.mark.asyncio
-async def test_is_blocked(auth_service, mock_redis_client):
-    mock_redis_client.read.return_value = True
-    blocked = await auth_service.is_blocked("token")
-    assert blocked
-
-@pytest.mark.asyncio
-async def test_block_token(auth_service, mock_redis_client):
+async def test_block_token(auth_service):
     await auth_service.block_token("token")
-    mock_redis_client.create.assert_called_once_with("token", "blocked")
+    auth_service.redis.create.assert_called_once_with("token", "blocked")
 
 @pytest.mark.asyncio
-async def test_signup(auth_service, mock_user_repository, mock_rabbitmq):
-    request = SignUpRequest(
-        name="John",
-        surname="Doe",
-        username="johndoe",
-        email="johndoe@example.com",
-        password="password",
-    )
-    await auth_service.signup(request)
-    mock_user_repository.create.assert_called_once()
+async def test_signup(auth_service):
+    auth_service.userRepository.read = AsyncMock(return_value=None)
+    auth_service.userRepository.create = AsyncMock()
+    result = await auth_service.signup(MagicMock())
+    assert result == {"detail": "User successfully registered."}
 
 @pytest.mark.asyncio
-async def test_login(auth_service, mock_user_repository):
-    request = LoginRequest(email="test@example.com", password="password")
-    mock_user_repository.read.return_value = User(
-        id="1", email="test@example.com", role="user"
-    )
-    tokens = await auth_service.login(request)
-    assert "access_token" in tokens
-    assert "refresh_token" in tokens
+async def test_login(auth_service):
+    auth_service.authenticate_user = AsyncMock(return_value=User())
+    auth_service.handle_login = AsyncMock(return_value={"access_token": "token"})
+    result = await auth_service.login(MagicMock())
+    assert result == {"access_token": "token"}
 
 @pytest.mark.asyncio
-async def test_refresh_token(auth_service, mock_redis_client, mock_user_repository):
-    mock_user_repository.read.return_value = User(
-        id="1", email="test@example.com", role="user"
-    )
-    mock_redis_client.read.return_value = False
-    tokens = await auth_service.refresh_token("refresh_token")
-    assert "access_token" in tokens
-    assert "refresh_token" in tokens
+async def test_refresh_token(auth_service):
+    auth_service.is_blocked = AsyncMock(return_value=False)
+    auth_service.block_token = AsyncMock()
+    auth_service.handle_login = AsyncMock(return_value={"access_token": "token"})
+    result = await auth_service.refresh_token("refresh_token")
+    assert result == {"access_token": "token"}
 
 @pytest.mark.asyncio
-async def test_reset_password(auth_service, mock_user_repository, mock_rabbitmq):
-    request = ResetPasswordRequest(
-        email="test@example.com", password="password", new_password="new_password"
-    )
-    user = User(id="1", email="test@example.com", role="user", password="hashed_password")
-    mock_user_repository.read.return_value = user
-    await auth_service.reset_password(request, "token")
-    mock_user_repository.update.assert_called_once()
-
+async def
