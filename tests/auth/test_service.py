@@ -83,4 +83,9 @@ async def test_refresh_token(auth_service):
     assert result == {"access_token": "token"}
 
 @pytest.mark.asyncio
-async def
+async def test_reset_password(auth_service):
+    auth_service.verify_password = AsyncMock(return_value=True)
+    auth_service.userRepository.update = AsyncMock()
+    auth_service.send_email = AsyncMock()
+    result = await auth_service.reset_password(MagicMock(), "token")
+    assert result == {"detail": "Password successfully reset."}
