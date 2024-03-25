@@ -53,7 +53,7 @@ async def test_login_wrong_password(client):
 
 
 @pytest.mark.asyncio
-async def test_refresh_token(client, user):
+async def test_refresh_token(client):
     response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
