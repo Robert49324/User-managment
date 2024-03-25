@@ -6,6 +6,10 @@ jobs:
   testing:
     name: testing
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
+
     env:
       PYTHONPATH: ${{ github.workspace }}/src
       POSTGRES_URL : ${{ secrets.POSTGRES_URL }}
