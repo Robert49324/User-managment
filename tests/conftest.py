@@ -11,9 +11,9 @@ from repositories.RabbitClient import RabbitMQ
 from repositories.RedisClient import RedisClient
 from src.main import app
 
-app.dependency_overrides[RabbitMQ] = lambda : AsyncMock()
-app.dependency_overrides[S3Client] = lambda : AsyncMock()
-app.dependency_overrides[RedisClient] = lambda : AsyncMock()
+app.dependency_overrides[RabbitMQ] = lambda: AsyncMock()
+app.dependency_overrides[S3Client] = lambda: AsyncMock()
+app.dependency_overrides[RedisClient] = lambda: AsyncMock()
 
 
 @pytest.fixture(scope="session")

@@ -1,4 +1,5 @@
 import time
+
 import pytest
 
 
@@ -63,6 +64,7 @@ async def test_refresh_token(client):
         json={"token": token},
     )
     assert response.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_reset_password(client):
