@@ -70,8 +70,7 @@ async def test_refresh_token_wrong_data(client):
         "/auth/refresh_token",
         json={"token": "token"},
     )
-    print(response.json())
-    assert response.status_code == 403
+    assert response.json()["status_code"] == 403
 
 
 @pytest.mark.asyncio
