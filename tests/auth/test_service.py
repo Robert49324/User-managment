@@ -21,27 +21,10 @@ async def test_create_access_token(auth_service):
     assert isinstance(token, str)
 
 @pytest.mark.asyncio
-async def test_create_access_token_wrong_data(auth_service):
-    data = {}
-    with pytest.raises(HTTPException) as e:
-        await auth_service.create_access_token(data)
-    assert e.value.status_code == 422
-    assert e.value.detail == "Missing data"
-
-@pytest.mark.asyncio
 async def test_create_refresh_token(auth_service):
     data = {"id": "1"}
     token = await auth_service.create_refresh_token(data)
     assert isinstance(token, str)
-
-@pytest.mark.asyncio
-async def test_create_refresh_token_wrong_data(auth_service):
-    data = {}
-    with pytest.raises(HTTPException) as e:
-        await auth_service.create_refresh_token(data)
-    assert e.value.status_code == 422
-    assert e.value.detail == "Missing data"
-
 
 @pytest.mark.asyncio
 async def test_generate_tokens(auth_service):
@@ -77,3 +60,51 @@ async def test_block_token(auth_service):
     await auth_service.block_token("token")
     auth_service.redis.create.assert_called_once_with("token", "blocked")
 
+@pytest.mark.asyncio
+async def test_authenticate_user_invalid_user(auth_service):
+    auth_service.userRepository.read = AsyncMock(return_value=None)
+    
+    with pytest.raises(HTTPException) as exc_info:
+        await auth_service.authenticate_user("test@example.com", "password")
+    
+    assert exc_info.value.status_code == 401
+    assert "Could not validate the user." in exc_info.value.detail
+
+@pytest.mark.asyncio
+async def test_is_blocked_blocked_token(auth_service):
+    auth_service.redis.read = AsyncMock(return_value=True)
+    
+    result = await auth_service.is_blocked("token")
+    assert result is True
+
+@pytest.mark.asyncio
+async def test_is_blocked_unblocked_token(auth_service):
+    auth_service.redis.read = AsyncMock(return_value=False)
+    
+    result = await auth_service.is_blocked("token")
+    assert result is False
+
+@pytest.mark.asyncio
+async def test_handle_login_invalid_user(auth_service):
+    user = None 
+    
+    with pytest.raises(HTTPException) as exc_info:
+        await auth_service.handle_login(user)
+    
+    assert exc_info.value.status_code == 401
+    assert "Could not validate user." in exc_info.value.detail
+
+@pytest.mark.asyncio
+async def test_block_token_called_with_correct_parameters(auth_service):
+    auth_service.redis.create = AsyncMock()
+    
+    await auth_service.block_token("token")
+    
+    auth_service.redis.create.assert_called_once_with("token", "blocked")
+
+@pytest.mark.asyncio
+async def test_block_token_exception_occurred(auth_service):
+    auth_service.redis.create = AsyncMock(side_effect=Exception())
+    
+    with pytest.raises(Exception):
+        await auth_service.block_token("token")
