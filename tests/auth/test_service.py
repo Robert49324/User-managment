@@ -64,6 +64,9 @@ async def test_block_token(auth_service):
 async def test_signup(auth_service):
     auth_service.userRepository.read = AsyncMock(return_value=None)
     auth_service.userRepository.create = AsyncMock()
+    
+    auth_service.settings = MagicMock(secret_key="test_secret_key")
+    
     result = await auth_service.signup(MagicMock())
     assert result == {"detail": "User successfully registered."}
 
@@ -79,6 +82,9 @@ async def test_refresh_token(auth_service):
     auth_service.is_blocked = AsyncMock(return_value=False)
     auth_service.block_token = AsyncMock()
     auth_service.handle_login = AsyncMock(return_value={"access_token": "token"})
+    
+    auth_service.authenticate_user = AsyncMock(return_value=User(id="1", email="test@example.com", role="user"))
+    
     result = await auth_service.refresh_token("refresh_token")
     assert result == {"access_token": "token"}
 
@@ -87,5 +93,8 @@ async def test_reset_password(auth_service):
     auth_service.verify_password = AsyncMock(return_value=True)
     auth_service.userRepository.update = AsyncMock()
     auth_service.send_email = AsyncMock()
+    
+    auth_service.authenticate_user = AsyncMock(return_value=User(id="1", email="test@example.com", role="user"))
+    
     result = await auth_service.reset_password(MagicMock(), "token")
     assert result == {"detail": "Password successfully reset."}
