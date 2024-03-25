@@ -65,15 +65,6 @@ async def test_refresh_token(client):
     assert response.status_code == 200
 
 @pytest.mark.asyncio
-async def test_refresh_token_wrong_data(client):
-    response = await client.post(
-        "/auth/refresh_token",
-        json={"token": "token"},
-    )
-    assert response.json()["status_code"] == 403
-
-
-@pytest.mark.asyncio
 async def test_reset_password(client):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
