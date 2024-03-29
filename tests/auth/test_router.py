@@ -1,5 +1,5 @@
 import time
-
+from unittest.mock import patch
 import pytest
 
 
@@ -68,21 +68,24 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client):
-    login_response = await client.post(
-        "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
-    )
-    access_token = login_response.json()["access_token"]
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = await client.post(
-        "/auth/reset_password",
-        json={
-            "email": "hT0Qf@example.com",
-            "password": "password",
-            "new_password": "new_password",
-        },
-        headers=headers,
-    )
-    assert response.status_code == 200
+    with patch('repositories.RabbitClient.RabbitMQ') as mock_send_email:
+        mock_send_email.return_value = None
+        login_response = await client.post(
+            "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
+        )
+        access_token = login_response.json()["access_token"]
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = await client.post(
+            "/auth/reset_password",
+            json={
+                "email": "hT0Qf@example.com",
+                "password": "password",
+                "new_password": "new_password",
+            },
+            headers=headers,
+        )
+        assert response.status_code == 200
+        assert mock_send_email.called 
 
 
 @pytest.mark.asyncio
