@@ -1,5 +1,5 @@
 import time
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import patch
 import pytest
 
 
@@ -68,13 +68,7 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client):
-    with patch('repositories.RabbitClient.RabbitMQ') as mock_rabbitmq_class:
-        mock_rabbitmq_instance = MagicMock()
-        mock_rabbitmq_class.return_value = mock_rabbitmq_instance
-
-        mock_publish = AsyncMock()
-        mock_rabbitmq_instance.publish = mock_publish
-
+    with patch('repositories.RabbitClient.RabbitMQ.publish') as mock_publish:
         login_response = await client.post(
             "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
         )
