@@ -90,7 +90,7 @@ async def test_reset_password(client):
             },
             headers=headers,
         )
-
+        print(response.json())
         assert response.status_code == 200
         mock_rabbit_instance.publish.assert_called_once()
 
@@ -111,5 +111,6 @@ async def test_reset_password_wrong_password(client):
         },
         headers=headers,
     )
+    print(response.json())
     assert response.status_code == 401
     assert response.json() == {"detail": "Could not validate the user."}
