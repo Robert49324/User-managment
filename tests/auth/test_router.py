@@ -81,7 +81,7 @@ async def test_reset_password(client):
         )
         print(login_response.json())
         access_token = login_response.json()["access_token"]
-        headers = {"Authorization": f"***"}
+        headers = {"Authorization": f"Bearer {access_token}"}
         response = await client.post(
             "/auth/reset_password",
             json={
