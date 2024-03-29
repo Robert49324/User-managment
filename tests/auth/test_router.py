@@ -68,7 +68,7 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client):
-    with patch('repositories.RabbitClient.RabbitMQ.send_email') as mock_send_email:
+    with patch('repositories.RabbitClient.RabbitMQ.publish') as mock_send_email:
         mock_send_email.return_value = None
         login_response = await client.post(
             "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
