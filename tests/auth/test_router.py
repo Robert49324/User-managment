@@ -1,5 +1,5 @@
 import time
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
 
@@ -69,31 +69,30 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client):
-    with patch('repositories.RabbitClient.connect') as mock_connect:
-        mock_connect.return_value = MagicMock()
-        mock_connect.return_value.connection = MagicMock()
-        
-        with patch('repositories.RabbitClient.RabbitMQ') as MockRabbit:
-            mock_rabbit_instance = MockRabbit.return_value
-            mock_rabbit_instance.publish = MagicMock()
+    with patch('repositories.RabbitClient.RabbitMQ') as MockRabbit:
+        mock_rabbit_instance = MockRabbit.return_value
+        mock_rabbit_instance.__aenter__ = AsyncMock(return_value=mock_rabbit_instance)
+        mock_rabbit_instance.__aexit__ = AsyncMock()
 
-            login_response = await client.post(
-                "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
-            )
-            access_token = login_response.json()["access_token"]
-            headers = {"Authorization": f"Bearer {access_token}"}
-            response = await client.post(
-                "/auth/reset_password",
-                json={
-                    "email": "hT0Qf@example.com",
-                    "password": "password",
-                    "new_password": "new_password",
-                },
-                headers=headers,
-            )
+        mock_rabbit_instance.publish = MagicMock()
+    
+        login_response = await client.post(
+            "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
+        )
+        access_token = login_response.json()["access_token"]
+        headers = {"Authorization": f"***"}
+        response = await client.post(
+            "/auth/reset_password",
+            json={
+                "email": "hT0Qf@example.com",
+                "password": "password",
+                "new_password": "new_password",
+            },
+            headers=headers,
+        )
 
-            assert response.status_code == 200
-            mock_rabbit_instance.publish.assert_called_once()
+        assert response.status_code == 200
+        mock_rabbit_instance.publish.assert_called_once()
 
 
 @pytest.mark.asyncio
