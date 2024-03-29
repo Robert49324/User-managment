@@ -92,6 +92,7 @@ async def test_reset_password(client):
         mock_rabbit_instance.publish.assert_called_once()
 
 
+
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
     login_response = await client.post(
