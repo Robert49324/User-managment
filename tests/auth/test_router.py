@@ -79,6 +79,7 @@ async def test_reset_password(client):
         login_response = await client.post(
             "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
         )
+        print(login_response.json())
         access_token = login_response.json()["access_token"]
         headers = {"Authorization": f"***"}
         response = await client.post(
@@ -100,6 +101,7 @@ async def test_reset_password_wrong_password(client):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "new_password"}
     )
+    print(login_response.json())
     access_token = login_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.post(
