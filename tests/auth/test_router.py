@@ -69,7 +69,7 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client):
-    with patch('repository.RabbitClient.RabbitMQ') as MockRabbit:
+    with patch('repositories.RabbitClient.RabbitMQ') as MockRabbit:
         mock_rabbit_instance = MockRabbit.return_value
         mock_rabbit_instance.publish = MagicMock()
 
