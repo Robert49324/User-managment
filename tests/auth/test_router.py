@@ -73,7 +73,6 @@ async def test_reset_password(client):
         mock_rabbit_instance = MockRabbit.return_value
         mock_rabbit_instance.__aenter__ = AsyncMock(return_value=mock_rabbit_instance)
         mock_rabbit_instance.__aexit__ = AsyncMock()
-
         mock_rabbit_instance.publish = MagicMock()
     
         login_response = await client.post(
@@ -82,6 +81,7 @@ async def test_reset_password(client):
         print(login_response.json())
         access_token = login_response.json()["access_token"]
         headers = {"Authorization": f"Bearer {access_token}"}
+        
         response = await client.post(
             "/auth/reset_password",
             json={
@@ -91,8 +91,10 @@ async def test_reset_password(client):
             },
             headers=headers,
         )
+        
         print(response.json())
         assert response.status_code == 200
+        
         mock_rabbit_instance.publish.assert_called_once()
 
 
