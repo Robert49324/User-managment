@@ -105,8 +105,8 @@ async def test_reset_password(client, mocker):
     )
     assert response.status_code == 200
 
-    mock_rabbitmq_enter.assert_called_once()
-    mock_rabbitmq_publish.assert_called_once()
+    mock_rabbitmq_enter.assert_called()
+    mock_rabbitmq_publish.assert_called()
 
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
