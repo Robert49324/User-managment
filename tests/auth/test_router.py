@@ -94,7 +94,7 @@ async def test_reset_password(client):
         print(response.json())
         assert response.status_code == 200
         
-        mock_rabbit_instance.publish.assert_called_once()
+        MockRabbit.publish.assert_called_once()
 
 
 @pytest.mark.asyncio
