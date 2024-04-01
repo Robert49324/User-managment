@@ -85,9 +85,8 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
-    mock_rabbitmq = mocker.patch("repositories.RabbitClient.RabbitMQ")
-    mock_rabbitmq_instance = mock_rabbitmq.return_value.__aenter__.return_value
-    mock_rabbitmq_instance.publish = mocker.AsyncMock()
+    mock_rabbitmq_enter = mocker.patch("your_module.RabbitMQ.__aenter__", return_value=mocker.AsyncMock())
+    mock_rabbitmq_publish = mocker.patch("your_module.RabbitMQ.publish", new_callable=mocker.AsyncMock)
 
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
@@ -105,7 +104,8 @@ async def test_reset_password(client, mocker):
     )
     assert response.status_code == 200
 
-    mock_rabbitmq_instance.publish.assert_called_once()
+    mock_rabbitmq_enter.assert_called_once()
+    mock_rabbitmq_publish.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
