@@ -90,14 +90,14 @@ class AuthService:
         await self.redis.create(token, "blocked")
 
     async def send_email(self, email: str):
-        async with self.rabbit:
+        async with self.rabbit as rabbit:
             message = {
                 "email": email,
                 "action": "change_password",
                 "datetime": datetime.datetime.now().isoformat(),
             }
-        async with self.rabbit:
-            await self.rabbit.publish(json.dumps(message), "change_password")
+            await rabbit.publish(json.dumps(message), "change_password")
+
 
     async def signup(self, user: SignUpRequest):
         if await self.userRepository.read(user.email) is None:
