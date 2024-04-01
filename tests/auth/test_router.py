@@ -85,7 +85,7 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
-    mock_rabbitmq = mocker.patch("your_module.RabbitMQ")
+    mock_rabbitmq = mocker.patch("repositories.RabbitClient.RabbitMQ")
     mock_rabbitmq_instance = mock_rabbitmq.return_value.__aenter__.return_value
     mock_rabbitmq_instance.publish = mocker.AsyncMock()
 
