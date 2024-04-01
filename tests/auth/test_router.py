@@ -1,7 +1,5 @@
-from unittest.mock import patch
-import pytest
 
-from repositories.RabbitClient import RabbitMQ
+import pytest
 
 
 @pytest.mark.asyncio
@@ -86,28 +84,28 @@ async def test_refresh_token(client):
 #     assert response.status_code == 200
 
 @pytest.mark.asyncio
-async def test_reset_password(client):
-    with patch('repositories.RabbitClient.RabbitMQ') as MockRabbitMQ:
-        rabbitmq_instance = MockRabbitMQ.return_value
+async def test_reset_password(client, mocker):
+    mock_rabbitmq = mocker.patch("your_module.RabbitMQ")
+    mock_rabbitmq_instance = mock_rabbitmq.return_value.__aenter__.return_value
+    mock_rabbitmq_instance.publish = mocker.AsyncMock()
 
-        login_response = await client.post(
-            "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
-        )
-        access_token = login_response.json()["access_token"]
-        headers = {"Authorization": f"Bearer {access_token}"}
-        response = await client.post(
-            "/auth/reset_password",
-            json={
-                "email": "hT0Qf@example.com",
-                "password": "password",
-                "new_password": "new_password",
-            },
-            headers=headers,
-        )
-        assert response.status_code == 200
-        RabbitMQ.publish.assert_called_once()
+    login_response = await client.post(
+        "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
+    )
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = await client.post(
+        "/auth/reset_password",
+        json={
+            "email": "hT0Qf@example.com",
+            "password": "password",
+            "new_password": "new_password",
+        },
+        headers=headers,
+    )
+    assert response.status_code == 200
 
-        
+    mock_rabbitmq_instance.publish.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
