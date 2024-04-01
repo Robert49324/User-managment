@@ -1,6 +1,8 @@
 from unittest.mock import patch
 import pytest
 
+from repositories.RabbitClient import RabbitMQ
+
 
 @pytest.mark.asyncio
 async def test_signup(client):
@@ -103,7 +105,7 @@ async def test_reset_password(client):
             headers=headers,
         )
         assert response.status_code == 200
-        rabbitmq_instance.publish.assert_called_once()
+        RabbitMQ.publish.assert_called_once()
 
         
 
