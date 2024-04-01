@@ -1,6 +1,4 @@
-import time
-from unittest.mock import patch, MagicMock, AsyncMock
-
+from unittest.mock import patch
 import pytest
 
 
@@ -67,21 +65,34 @@ async def test_refresh_token(client):
     assert response.status_code == 200
 
 
+# @pytest.mark.asyncio
+# async def test_reset_password(client, mocker):
+#     login_response = await client.post(
+#         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
+#     )
+#     access_token = login_response.json()["access_token"]
+#     headers = {"Authorization": f"Bearer {access_token}"}
+#     response = await client.post(
+#         "/auth/reset_password",
+#         json={
+#             "email": "hT0Qf@example.com",
+#             "password": "password",
+#             "new_password": "new_password",
+#         },
+#         headers=headers,
+#     )
+#     assert response.status_code == 200
+
 @pytest.mark.asyncio
-async def test_reset_password(client):
-    with patch('repositories.RabbitClient.RabbitMQ') as MockRabbit:
-        mock_instance = MockRabbit.return_value
-        mock_instance.__aenter__ = AsyncMock(return_value=None)
-        mock_instance.__aexit__ = AsyncMock(return_value=None)
-        mock_instance.publish.return_value = None
-    
+async def test_reset_password(client, mocker):
+    with patch('repositories.RabbitClient.RabbitMQ') as MockRabbitMQ:
+        rabbitmq_instance = MockRabbitMQ.return_value
+
         login_response = await client.post(
             "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
         )
-        print(login_response.json())
         access_token = login_response.json()["access_token"]
         headers = {"Authorization": f"Bearer {access_token}"}
-        
         response = await client.post(
             "/auth/reset_password",
             json={
@@ -91,11 +102,10 @@ async def test_reset_password(client):
             },
             headers=headers,
         )
-        
-        print(response.json())
+
+        rabbitmq_instance.publish.assert_called_once()
+
         assert response.status_code == 200
-        
-        mock_instance.publish.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
