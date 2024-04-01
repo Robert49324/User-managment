@@ -102,10 +102,10 @@ async def test_reset_password(client):
             },
             headers=headers,
         )
-
+        assert response.status_code == 200
         rabbitmq_instance.publish.assert_called_once()
 
-        assert response.status_code == 200
+        
 
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
