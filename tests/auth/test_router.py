@@ -1,7 +1,10 @@
-import time
+import datetime
+import json
 from unittest.mock import patch, MagicMock, AsyncMock
 
 import pytest
+
+from repositories.RabbitClient import RabbitMQ
 
 
 @pytest.mark.asyncio
@@ -68,34 +71,36 @@ async def test_refresh_token(client):
 
 
 @pytest.mark.asyncio
-async def test_reset_password(client):
-    with patch('repositories.RabbitClient.RabbitMQ') as MockRabbit:
-        mock_rabbit_instance = MockRabbit.return_value
-        mock_rabbit_instance.__aenter__ = AsyncMock(return_value=mock_rabbit_instance)
-        mock_rabbit_instance.__aexit__ = AsyncMock()
-        mock_rabbit_instance.publish = MagicMock()
-    
-        login_response = await client.post(
-            "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
-        )
-        print(login_response.json())
-        access_token = login_response.json()["access_token"]
-        headers = {"Authorization": f"Bearer {access_token}"}
-        
-        response = await client.post(
-            "/auth/reset_password",
-            json={
-                "email": "hT0Qf@example.com",
-                "password": "password",
-                "new_password": "new_password",
-            },
-            headers=headers,
-        )
-        
-        print(response.json())
-        assert response.status_code == 200
-        
-        mock_rabbit_instance.publish.assert_called_once()
+async def test_reset_password(client, mocker):
+    mock_rabbitmq_instance = AsyncMock(spec=RabbitMQ)
+    mocker.patch("repositories.RabbitClient.RabbitMQ", return_value=mock_rabbitmq_instance)
+
+    login_response = await client.post(
+        "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
+    )
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = await client.post(
+        "/auth/reset_password",
+        json={
+            "email": "hT0Qf@example.com",
+            "password": "password",
+            "new_password": "new_password",
+        },
+        headers=headers,
+    )
+    assert response.status_code == 200
+
+    mock_rabbitmq_instance.publish.assert_called_once()
+
+    expected_message = {
+        "email": "hT0Qf@example.com",
+        "action": "change_password",
+        "datetime": datetime.datetime.now().isoformat(),
+    }
+    mock_rabbitmq_instance.publish.assert_called_once_with(
+        json.dumps(expected_message), "change_password"
+    )
 
 
 @pytest.mark.asyncio
