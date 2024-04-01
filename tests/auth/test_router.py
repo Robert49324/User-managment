@@ -87,7 +87,7 @@ async def test_refresh_token(client):
 async def test_reset_password(client, mocker):
     mock_rabbitmq_enter = mocker.patch("repositories.RabbitClient.RabbitMQ.__aenter__", return_value=mocker.AsyncMock())
     mock_rabbitmq_exit = mocker.patch("repositories.RabbitClient.RabbitMQ.__aexit__", return_value=None)
-    mock_rabbitmq_publish = mocker.patch("repositories.RabbitClient.RabbitMQ.publish", new_callable=mocker.AsyncMock())
+    mock_rabbitmq_publish = mocker.patch("repositories.RabbitClient.RabbitMQ.publish", new_callable=mocker.AsyncMock)
 
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
