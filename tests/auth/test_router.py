@@ -107,6 +107,43 @@ async def test_reset_password(client, mocker):
 
     mock_rabbitmq_enter.assert_called()
     mock_rabbitmq_publish.assert_called()
+    
+@pytest.mark.asyncio
+async def test_reset_password(client, mocker):
+    # Mock the dependencies
+    mock_user_repository = mocker.MagicMock()
+    mock_redis = mocker.MagicMock()
+
+    # Mock RabbitMQ
+    mock_rabbitmq = mocker.MagicMock()
+    mock_rabbitmq_instance = mocker.AsyncMock()
+    mock_rabbitmq_instance.publish = mocker.AsyncMock()
+    mock_rabbitmq.__aenter__ = mocker.AsyncMock(return_value=mock_rabbitmq_instance)
+    mock_rabbitmq.__aexit__ = mocker.AsyncMock()
+
+    # Patch the AuthService dependencies
+    mocker.patch("your_module.UserRepository", return_value=mock_user_repository)
+    mocker.patch("your_module.RedisClient", return_value=mock_redis)
+    mocker.patch("your_module.RabbitMQ", return_value=mock_rabbitmq)
+    login_response = await client.post(
+        "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
+    )
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+    # Make the request to reset the password
+    response = await client.post(
+        "/auth/reset_password",
+        json={
+            "email": "example@example.com",
+            "password": "current_password",
+            "new_password": "new_password",
+        },
+        headers=headers,
+    )
+
+    # Assert that the RabbitMQ methods were called as expected
+    mock_rabbitmq.assert_called_once()
+    mock_rabbitmq_instance.publish.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):

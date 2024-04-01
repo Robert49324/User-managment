@@ -90,16 +90,13 @@ class AuthService:
         await self.redis.create(token, "blocked")
 
     async def send_email(self, email: str):
-        print("here2")
         async with self.rabbit as rabbit:
             message = {
                 "email": email,
                 "action": "change_password",
                 "datetime": datetime.datetime.now().isoformat(),
             }
-            print("here3")
             await rabbit.publish(json.dumps(message), "change_password")
-            print("here4")
 
 
     async def signup(self, user: SignUpRequest):
@@ -136,12 +133,9 @@ class AuthService:
         token: str = Depends(authorize),
     ):
         user = await get_current_user(self, token)
-        print("here")
         if await self.verify_password(user, request.password):
             await self.userRepository.update(
                 {"password": bcrypt_context.hash(request.new_password)}, user.id
             )
-            print("here1")
             await self.send_email(request.email)
-            print("here5")
         return {"detail": "Password successfully reset."}
