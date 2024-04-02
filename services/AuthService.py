@@ -1,5 +1,6 @@
 import datetime
 import json
+from uuid import uuid4
 
 from fastapi import Depends, HTTPException
 from jose import jwt
@@ -89,14 +90,17 @@ class AuthService:
     async def block_token(self, token: str = Depends(oauth2_bearer)):
         await self.redis.create(token, "blocked")
 
-    async def send_email(self, email: str):
+    async def send_email(self, email: str, user: User):
         async with self.rabbit as rabbit:
             message = {
-                "email": email,
-                "action": "change_password",
-                "datetime": datetime.datetime.now().isoformat(),
+                "user_id": str(user.id),
+                "email": user.email,
+                "subject": "Password Reset",
+                "body": f"Your password was reset",
+                "published_at": datetime.datetime.now().isoformat(),
+                "sent_at": datetime.datetime.now().isoformat(),
             }
-            await rabbit.publish(json.dumps(message), "change_password")
+            await rabbit.publish(json.dumps(message), "reset_password")
 
 
     async def signup(self, user: SignUpRequest):
@@ -137,5 +141,5 @@ class AuthService:
             await self.userRepository.update(
                 {"password": bcrypt_context.hash(request.new_password)}, user.id
             )
-            await self.send_email(request.email)
+            await self.send_email(request.email, user)
         return {"detail": "Password successfully reset."}
