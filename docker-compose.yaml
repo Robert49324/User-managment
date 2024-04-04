@@ -1,0 +1,68 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - backend
+
+  redis:
+    image: redis:7.2.4-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PORT=${REDIS_PORT}
+    networks:
+      - backend
+    
+  rabbitmq:
+    image: rabbitmq:3.12-alpine
+    hostname: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
+    ports:
+      - 15672:15672
+    networks:
+      - backend
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    environment:
+      - SERVICES=s3, ses
+    ports:
+      - 4566:4566
+    networks:
+      - backend
+    volumes:
+      - './verify_email.sh:/etc/localstack/init/ready.d/init-ses.sh'    
+      
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - rabbitmq
+      - localstack
+      - postgres
+    networks:
+      - backend
+  
+networks:
+  backend:
+    name: backend
+    driver: bridge
