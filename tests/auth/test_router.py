@@ -77,11 +77,11 @@ async def test_reset_password(client, mocker):
     # mock_rabbitmq_publish = mocker.patch("repositories.RabbitClient.RabbitMQ.publish", return_value=None)
     print("here5")
 
-    login_response = await client.post(
+    response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
-    print(login_response.json())
-    access_token = login_response.json()["access_token"]
+    print(response.json())
+    access_token = response.json()["access_token"]
     print(access_token)
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.post(
