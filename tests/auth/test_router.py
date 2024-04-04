@@ -80,7 +80,7 @@ async def test_reset_password(client, mocker):
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
-    print(login_response)
+    print(login_response.json())
     access_token = login_response.json()["access_token"]
     print(access_token)
     headers = {"Authorization": f"Bearer {access_token}"}
