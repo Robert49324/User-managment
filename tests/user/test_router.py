@@ -1,3 +1,5 @@
+from io import BytesIO
+from fastapi import UploadFile
 import pytest
 
 
@@ -33,9 +35,18 @@ async def test_get_users(client):
             "email": "jJl8j@example.com",
         },
     )
-
+    await client.post(
+        "/auth/signup",
+        json={
+            "name": "test_user",
+            "surname": "Doe",
+            "username": "robertdoe",
+            "password": "password",
+            "email": "test@example.com",
+        },
+    )
     response = await client.get(
-        "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc"
+        "/users?page=1&size=2&filter_by_name=john&sort_by=name&order_by=desc",
     )
     assert response.status_code == 200
 
@@ -71,3 +82,4 @@ async def test_delete_user(client):
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.delete("/user/me", headers=headers)
     assert response.status_code == 200
+    

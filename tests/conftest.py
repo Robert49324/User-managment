@@ -5,22 +5,14 @@ from unittest.mock import AsyncMock
 import pytest
 import pytest_asyncio
 from async_asgi_testclient import TestClient
-from src.aws import get_s3_client
 
+from repositories.AWSClient import S3Client
+from repositories.RabbitClient import RabbitMQ
+from repositories.RedisClient import RedisClient
 from src.main import app
-from src.rabbitmq import get_rabbitmq
 
-
-def get_rabbitmq_override():
-    return AsyncMock()
-
-
-def get_s3client_override():
-    return AsyncMock()
-
-
-app.dependency_overrides[get_rabbitmq] = get_rabbitmq_override
-app.dependency_overrides[get_s3_client] = get_s3client_override
+app.dependency_overrides[S3Client] = lambda: AsyncMock()
+app.dependency_overrides[RedisClient] = lambda: AsyncMock()
 
 
 @pytest.fixture(scope="session")
@@ -28,7 +20,7 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
-    
+
 
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[TestClient, None]:

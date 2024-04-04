@@ -9,8 +9,12 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+COPY poetry.lock pyproject.toml /app/
+
+RUN pip install poetry==1.7.1 && poetry install
+
 COPY . .
 
-RUN pip install poetry==1.7.1 && poetry install && chmod +x /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 CMD ["/app/entrypoint.sh"]

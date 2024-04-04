@@ -2,11 +2,13 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi_pagination import add_pagination
 
-from auth.router import auth
-from config import settings
+from configs.dependencies import get_settings
 from logger import logger
-from user.router import user, users
-from group.router import group
+from routers.AuthRouter import auth
+from routers.GroupRouter import group
+from routers.UserRouter import user, users
+
+settings = get_settings()
 
 app = FastAPI()
 add_pagination(app)

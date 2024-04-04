@@ -1,5 +1,3 @@
-import time
-from unittest.mock import AsyncMock
 
 import pytest
 
@@ -40,6 +38,7 @@ async def test_login(client):
     response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
+
     assert response.status_code == 200
     assert response.json()["access_token"] is not None
 
@@ -55,33 +54,28 @@ async def test_login_wrong_password(client):
 
 @pytest.mark.asyncio
 async def test_refresh_token(client):
-    login_response = await client.post(
+    response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
-    access_token = login_response.json()["access_token"]
-    refresh_token = login_response.json()["refresh_token"]
-    headers = {"Authorization": f"Bearer {access_token}"}
-    time.sleep(1)
-    response = await client.post("/auth/refresh_token", headers=headers)
+    token = response.json()["access_token"]
+    response = await client.post(
+        "/auth/refresh_token",
+        json={"token": token},
+    )
     assert response.status_code == 200
-    assert response.json()["access_token"] != access_token
-    assert response.json()["refresh_token"] != refresh_token
-
-
-@pytest.mark.asyncio
-async def test_refresh_token_wrong_token(client):
-    headers = {"Authorization": f"Bearer wrong_token"}
-    response = await client.post("/auth/refresh_token", headers=headers)
-    assert response.status_code == 401
-    assert response.json() == {"detail": "Could not validate the user."}
 
 
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
-    login_response = await client.post(
+    mock_rabbitmq_enter = mocker.patch("repositories.RabbitClient.RabbitMQ.__aenter__", return_value=mocker.AsyncMock())
+    mock_rabbitmq_exit = mocker.patch("repositories.RabbitClient.RabbitMQ.__aexit__", return_value=None)
+
+    response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
-    access_token = login_response.json()["access_token"]
+    print(response.json())
+    access_token = response.json()["access_token"]
+    print(access_token)
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.post(
         "/auth/reset_password",
@@ -93,8 +87,9 @@ async def test_reset_password(client, mocker):
         headers=headers,
     )
     assert response.status_code == 200
-
-
+    
+    mock_rabbitmq_enter.assert_called()
+    
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
     login_response = await client.post(

@@ -6,6 +6,10 @@ jobs:
   testing:
     name: testing
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
+
     env:
       PYTHONPATH: ${{ github.workspace }}/src
       POSTGRES_URL : ${{ secrets.POSTGRES_URL }}
@@ -34,15 +38,6 @@ jobs:
           POSTGRES_PASSWORD: admin
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      redis:
-        image: redis:7.2.4-alpine
-        ports:
-          - "6379:6379"
-        env:
-          ALLOW_EMPTY_PASSWORD : yes
-          REDIS_PORT : ${REDIS_PORT}
-
-
     steps:
       - name: Install PostgreSQL client
         run: |
@@ -69,3 +64,5 @@ jobs:
       - name: Run tests
         run: |
           poetry run pytest --cov
+          poetry run coverage report --fail-under=80
+
