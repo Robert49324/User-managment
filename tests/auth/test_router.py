@@ -65,35 +65,24 @@ async def test_refresh_token(client):
     assert response.status_code == 200
 
 
-# @pytest.mark.asyncio
-# async def test_reset_password(client, mocker):
-#     login_response = await client.post(
-#         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
-#     )
-#     access_token = login_response.json()["access_token"]
-#     headers = {"Authorization": f"Bearer {access_token}"}
-#     response = await client.post(
-#         "/auth/reset_password",
-#         json={
-#             "email": "hT0Qf@example.com",
-#             "password": "password",
-#             "new_password": "new_password",
-#         },
-#         headers=headers,
-#     )
-#     assert response.status_code == 200
-
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
+    print("here1")
     mock_rabbitmq_init = mocker.patch("repositories.RabbitClient.RabbitMQ.__init__", return_value=None)
+    print("here2")
     mock_rabbitmq_enter = mocker.patch("repositories.RabbitClient.RabbitMQ.__aenter__", return_value=mocker.AsyncMock())
+    print("here3")
     mock_rabbitmq_exit = mocker.patch("repositories.RabbitClient.RabbitMQ.__aexit__", return_value=None)
+    print("here4")
     mock_rabbitmq_publish = mocker.patch("repositories.RabbitClient.RabbitMQ.publish", return_value=None)
+    print("here5")
 
     login_response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
+    print(login_response)
     access_token = login_response.json()["access_token"]
+    print(access_token)
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.post(
         "/auth/reset_password",
