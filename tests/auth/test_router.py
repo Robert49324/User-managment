@@ -68,7 +68,7 @@ async def test_refresh_token(client):
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
     print("here1")
-    # mock_rabbitmq_init = mocker.patch("repositories.RabbitClient.RabbitMQ.__init__", return_value=None)
+    mock_rabbitmq_init = mocker.patch("repositories.RabbitClient.RabbitMQ.__init__", return_value=None)
     print("here2")
     mock_rabbitmq_enter = mocker.patch("repositories.RabbitClient.RabbitMQ.__aenter__", return_value=mocker.AsyncMock())
     print("here3")
@@ -95,7 +95,7 @@ async def test_reset_password(client, mocker):
     )
     assert response.status_code == 200
     
-    # mock_rabbitmq_init.assert_called()
+    mock_rabbitmq_init.assert_called()
     mock_rabbitmq_enter.assert_called()
     # mock_rabbitmq_publish.assert_called()
     
