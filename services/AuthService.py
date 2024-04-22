@@ -5,15 +5,18 @@ from uuid import uuid4
 from fastapi import Depends, HTTPException
 from jose import jwt
 
-from configs.dependencies import (authorize, bcrypt_context, get_current_user,
-                                  oauth2_bearer)
+from configs.dependencies import (
+    authorize,
+    bcrypt_context,
+    get_current_user,
+    oauth2_bearer,
+)
 from configs.environment import get_settings
 from models.UserModel import User
 from repositories.RabbitClient import RabbitMQ
 from repositories.RedisClient import RedisClient
 from repositories.UserRepository import UserRepository
-from schemas.AuthSchemas import (LoginRequest, ResetPasswordRequest,
-                                 SignUpRequest)
+from schemas.AuthSchemas import LoginRequest, ResetPasswordRequest, SignUpRequest
 from src.logger import logger
 
 settings = get_settings()
@@ -101,7 +104,6 @@ class AuthService:
                 "sent_at": datetime.datetime.now().isoformat(),
             }
             await rabbit.publish(json.dumps(message), "reset_password")
-
 
     async def signup(self, user: SignUpRequest):
         if await self.userRepository.read(user.email) is None:
