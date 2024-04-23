@@ -1,4 +1,3 @@
-
 import pytest
 
 
@@ -67,15 +66,17 @@ async def test_refresh_token(client):
 
 @pytest.mark.asyncio
 async def test_reset_password(client, mocker):
-    mock_rabbitmq_enter = mocker.patch("repositories.RabbitClient.RabbitMQ.__aenter__", return_value=mocker.AsyncMock())
-    mock_rabbitmq_exit = mocker.patch("repositories.RabbitClient.RabbitMQ.__aexit__", return_value=None)
+    mock_rabbitmq_enter = mocker.patch(
+        "repositories.RabbitClient.RabbitMQ.__aenter__", return_value=mocker.AsyncMock()
+    )
+    mock_rabbitmq_exit = mocker.patch(
+        "repositories.RabbitClient.RabbitMQ.__aexit__", return_value=None
+    )
 
     response = await client.post(
         "/auth/login", json={"email": "hT0Qf@example.com", "password": "password"}
     )
-    print(response.json())
     access_token = response.json()["access_token"]
-    print(access_token)
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.post(
         "/auth/reset_password",
@@ -87,9 +88,10 @@ async def test_reset_password(client, mocker):
         headers=headers,
     )
     assert response.status_code == 200
-    
+
     mock_rabbitmq_enter.assert_called()
-    
+
+
 @pytest.mark.asyncio
 async def test_reset_password_wrong_password(client):
     login_response = await client.post(
