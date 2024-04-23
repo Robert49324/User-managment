@@ -1,6 +1,7 @@
 from io import BytesIO
-from fastapi import UploadFile
+
 import pytest
+from fastapi import UploadFile
 
 
 @pytest.mark.asyncio
@@ -82,4 +83,3 @@ async def test_delete_user(client):
     headers = {"Authorization": f"Bearer {access_token}"}
     response = await client.delete("/user/me", headers=headers)
     assert response.status_code == 200
-    

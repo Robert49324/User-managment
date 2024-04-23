@@ -1,0 +1,26 @@
+syntax= "proto3";
+
+package grpc;
+
+message UserModel{
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string username = 4;
+    string email = 5;
+    string role = 6;
+    uint64 group = 7;
+    bool is_blocked = 8;
+}
+
+message GetUserRequest {
+    string jwt = 1;
+}
+
+message GetUserResponse {
+    UserModel user = 1;
+}
+
+service UserService {
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}

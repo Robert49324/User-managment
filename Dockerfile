@@ -17,4 +17,6 @@ COPY . .
 
 RUN chmod +x /app/entrypoint.sh
 
+RUN poetry run python src/grpc_server.py &
+
 CMD ["/app/entrypoint.sh"]

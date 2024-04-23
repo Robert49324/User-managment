@@ -102,7 +102,6 @@ class AuthService:
             }
             await rabbit.publish(json.dumps(message), "reset_password")
 
-
     async def signup(self, user: SignUpRequest):
         if await self.userRepository.read(user.email) is None:
             logger.info(f"User {user.email} has been registrated")

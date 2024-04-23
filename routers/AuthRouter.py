@@ -1,9 +1,6 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends
 
-from configs.dependencies import authorize, get_current_user
-from models.UserModel import User
+from configs.dependencies import authorize
 from schemas.AuthSchemas import (LoginRequest, ResetPasswordRequest,
                                  SignUpRequest, Token)
 from services.AuthService import AuthService

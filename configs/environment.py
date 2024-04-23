@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     host: str = Field(default="")
     port: int = Field(default=0)
 
+    rpc_host: str = Field(default="")
+    rpc_port: int = Field(default=0)
+
 
 @lru_cache
 def get_settings() -> Settings:
