@@ -37,13 +37,7 @@ class GRPCServer(grpc_pb2_grpc.UserServiceServicer):
 
     async def GetUser(self, request, context):
         try:
-            payload = jwt.decode(
-                request.jwt, settings.secret_key, algorithms=settings.algorithm
-            )
-            user_id: str = payload.get("id")
-            if user_id is None:
-                raise Exception("User ID not found in JWT")
-
+            user_id: str = request.id
             user = await self.user_fetcher.fetch_user(user_id)
             return grpc_pb2.GetUserResponse(user=user)
         except Exception as e:
