@@ -1,4 +1,3 @@
-import logging
 from grpc import aio
 from jose import jwt
 from sqlalchemy import select
@@ -11,34 +10,15 @@ from proto.grpc_pb2 import UserModel
 
 settings = get_settings()
 
-logger = logging.getLogger("user_managment")
 
-
-class GRPCServer(grpc_pb2_grpc.UserServiceServicer):
-    def __init__(self):
-        self.db = get_db()
-
-    async def GetUser(self, request, context):
-        try:
-            payload = jwt.decode(
-                request.jwt, settings.secret_key, algorithms=settings.algorithm
-            )
-            id: str = payload.get("id")
-            if id is None:
-                raise Exception("User ID not found in JWT")
-
-            async def fetch_user():
-                async for session in self.db:
-                    user_query = await session.execute(select(User).where(User.id == id))
-                    user = user_query.scalar()
-                    if user is not None:
-                        return user
-                return None
-
-            user = await fetch_user()
-
+class UserFetcher:
+    async def fetch_user(self, user_id: str) -> UserModel:
+        db = get_db()
+        async for session in db:
+            user = await session.execute(select(User).where(User.id == user_id))
+            user = user.scalar()
             if user is not None:
-                user_data = UserModel(
+                return UserModel(
                     id=str(user.id),
                     name=str(user.name),
                     surname=str(user.surname),
@@ -48,18 +28,26 @@ class GRPCServer(grpc_pb2_grpc.UserServiceServicer):
                     group=int(user.group) if user.group is not None else 0,
                     is_blocked=bool(user.is_blocked),
                 )
-                print(user_data.group)
-                return grpc_pb2.GetUserResponse(
-                    user=user_data
-                )
-            else:
-                raise Exception("User not found")
+        raise Exception("User not found")
 
+
+class GRPCServer(grpc_pb2_grpc.UserServiceServicer):
+    def __init__(self):
+        self.user_fetcher = UserFetcher()
+
+    async def GetUser(self, request, context):
+        try:
+            payload = jwt.decode(
+                request.jwt, settings.secret_key, algorithms=settings.algorithm
+            )
+            user_id: str = payload.get("id")
+            if user_id is None:
+                raise Exception("User ID not found in JWT")
+
+            user = await self.user_fetcher.fetch_user(user_id)
+            return grpc_pb2.GetUserResponse(user=user)
         except Exception as e:
-            print(e)
-            logger.error(f"Error getting user: {str(e)}")
             return grpc_pb2.GetUserResponse()
-
 
 
 async def run_grpc_server():

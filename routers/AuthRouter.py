@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 
 from configs.dependencies import authorize
-from schemas.AuthSchemas import LoginRequest, ResetPasswordRequest, SignUpRequest, Token
+from schemas.AuthSchemas import (LoginRequest, ResetPasswordRequest,
+                                 SignUpRequest, Token)
 from services.AuthService import AuthService
 
 auth = APIRouter(prefix="/auth", tags=["Auth module"])
